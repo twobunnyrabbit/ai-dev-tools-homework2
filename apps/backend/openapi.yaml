@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: Coding Interview Platform API
+  description: API for online coding interviews
+  version: 0.0.0
+servers:
+  - url: http://localhost:3000
+    description: Development server
+paths:
+  /api/health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the API
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Successful health check
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+          example: '2025-12-03T10:30:00.000Z'

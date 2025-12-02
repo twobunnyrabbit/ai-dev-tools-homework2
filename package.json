@@ -1,0 +1,22 @@
+{
+  "name": "coding-interview-platform",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r --parallel --stream dev",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "build": "pnpm -r build",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backend": "pnpm --filter backend build",
+    "type-check": "pnpm -r type-check",
+    "generate:types": "pnpm --filter @repo/api-types generate"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}

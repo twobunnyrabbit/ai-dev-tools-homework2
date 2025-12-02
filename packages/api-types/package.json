@@ -1,0 +1,13 @@
+{
+  "name": "@repo/api-types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/schema.ts",
+  "scripts": {
+    "generate": "./generate.sh"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.4.4"
+  }
+}
