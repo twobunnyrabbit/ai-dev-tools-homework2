@@ -45,36 +45,36 @@ Real-time collaborative code editor for online interviews with shareable links, 
 
 ---
 
-## Phase 2: Frontend Routing + Basic UI ⬜
+## Phase 2: Frontend Routing + Basic UI ✅
 **Goal:** Navigation structure and session creation
 
 ### Dependencies
-- [ ] `cd apps/frontend && pnpm add react-router-dom`
-- [ ] `pnpm add -D @types/react-router-dom`
+- [x] `cd apps/frontend && pnpm add react-router-dom`
+- [x] `pnpm add -D @types/react-router-dom`
 
 ### Files to Create
-- [ ] `src/types/session.ts` - Frontend types
-- [ ] `src/lib/api.ts` - HTTP client functions
-- [ ] `src/router.tsx` - React Router configuration
-- [ ] `src/pages/HomePage.tsx` - Landing page with language selector + "Create Session"
-- [ ] `src/pages/SessionPage.tsx` - Collaborative editor page (skeleton)
-- [ ] `src/pages/SessionNotFoundPage.tsx` - Error page for invalid sessions
+- [x] `src/types/session.ts` - Frontend types
+- [x] `src/lib/api.ts` - HTTP client functions
+- [x] `src/router.tsx` - React Router configuration
+- [x] `src/pages/HomePage.tsx` - Landing page with language selector + "Create Session"
+- [x] `src/pages/SessionPage.tsx` - Collaborative editor page (skeleton)
+- [x] `src/pages/SessionNotFoundPage.tsx` - Error page for invalid sessions
 
 ### Files to Modify
-- [ ] `src/App.tsx` - Replace with RouterProvider
+- [x] `src/App.tsx` - Replace with RouterProvider
 
 ### Features to Implement
-- [ ] HomePage: Language selector dropdown (JavaScript, Python, TypeScript, Go, Java, C++)
-- [ ] HomePage: "Create Session" button → POST /api/sessions → navigate to /session/:id
-- [ ] SessionPage: Extract sessionId from URL params
-- [ ] SessionPage: Fetch session metadata (GET /api/sessions/:id)
-- [ ] SessionPage: Display shareable link with copy button
-- [ ] SessionPage: Show loading state while fetching
+- [x] HomePage: Language selector dropdown (JavaScript, Python, TypeScript, Go, Java, C++)
+- [x] HomePage: "Create Session" button → POST /api/sessions → navigate to /session/:id
+- [x] SessionPage: Extract sessionId from URL params
+- [x] SessionPage: Fetch session metadata (GET /api/sessions/:id)
+- [x] SessionPage: Display shareable link with copy button
+- [x] SessionPage: Show loading state while fetching
 
 ### Testing
-- [ ] Navigate from home to session page
-- [ ] Copy shareable link
-- [ ] Handle invalid session ID (redirect to error page)
+- [x] Navigate from home to session page
+- [x] Copy shareable link
+- [x] Handle invalid session ID (redirect to error page)
 
 ---
 

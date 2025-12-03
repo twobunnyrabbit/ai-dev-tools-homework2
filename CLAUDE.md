@@ -51,9 +51,13 @@ pnpm generate:types     # Generate TypeScript types from openapi.yaml
 Uses ESM modules (`.js` extensions in imports required).
 
 ### Frontend
-- Built with React 19, Vite, Tailwind CSS
+- Built with React 19, Vite, Tailwind CSS, React Router
 - Includes shadcn/ui utilities (`class-variance-authority`, `clsx`, `tailwind-merge`)
 - TypeScript with strict mode enabled
+- **Router**: `src/router.tsx` - Route configuration for /, /session/:id, /session-not-found
+- **Pages**: `src/pages/` - HomePage, SessionPage, SessionNotFoundPage
+- **Types**: `src/types/session.ts` - Frontend TypeScript types
+- **API Client**: `src/lib/api.ts` - HTTP client for backend REST API
 
 ### Type Generation Workflow
 1. Update `apps/backend/openapi.yaml` with API changes
@@ -84,8 +88,14 @@ Uses ESM modules (`.js` extensions in imports required).
   - WebSocket handlers for real-time collaboration
   - API endpoints: POST /api/sessions, GET /api/sessions/:id, GET /api/sessions/:id/code
   - Socket.io events for join/leave, code sync, language changes, cursor position
-- ⬜ **Phase 2: Frontend Routing + Basic UI** - Next up
-- ⬜ **Phase 3-7**: Remaining phases
+- ✅ **Phase 2: Frontend Routing + Basic UI** - Navigation and session creation complete
+  - React Router setup with HomePage, SessionPage, SessionNotFoundPage
+  - HTTP client (src/lib/api.ts) for REST API calls
+  - Homepage with language selector and "Create Session" button
+  - Session page with shareable link, copy functionality, metadata display
+  - Frontend types and error handling
+- ⬜ **Phase 3: Monaco Editor Integration** - Next up
+- ⬜ **Phase 4-7**: Remaining phases
 
 **Key Features:**
 - Shareable session links for interviews
