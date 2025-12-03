@@ -68,3 +68,18 @@ Uses ESM modules (`.js` extensions in imports required).
 - **Node**: >=20 required
 - **pnpm**: >=9 required
 - Backend reads `.env` file via dotenv (PORT defaults to 3000)
+
+## Current Work
+
+**Project Goal:** Build a collaborative online coding interview platform with real-time multi-user editing.
+
+**Implementation Plan:** See `PLAN.md` in the root directory for the complete 7-phase implementation plan with detailed checklists.
+
+**Key Features:**
+- Shareable session links for interviews
+- Real-time collaborative code editing (Socket.io WebSockets)
+- Monaco Editor with multi-language syntax highlighting
+- In-memory session storage (ephemeral)
+- User presence and connection status
+
+**When starting a new session:** Reference `PLAN.md` to understand the implementation roadmap and track progress through the phases.

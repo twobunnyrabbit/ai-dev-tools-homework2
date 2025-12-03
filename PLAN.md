@@ -1,0 +1,323 @@
+# Implementation Plan: Collaborative Coding Interview Platform
+
+## Overview
+Real-time collaborative code editor for online interviews with shareable links, WebSocket-based multi-user editing, and syntax highlighting.
+
+**Tech Stack:** Socket.io, Monaco Editor, React Router, Express, In-memory sessions
+
+---
+
+## Phase 1: Backend Foundation ⬜
+**Goal:** API + WebSocket infrastructure
+
+### Dependencies
+- [ ] `cd apps/backend && pnpm add socket.io`
+- [ ] `pnpm add -D @types/socket.io`
+
+### Files to Create
+- [ ] `src/types/session.types.ts` - TypeScript interfaces (Session, User)
+- [ ] `src/utils/id-generator.ts` - Session ID generation (crypto.randomBytes)
+- [ ] `src/services/session.service.ts` - In-memory CRUD (Map-based storage)
+- [ ] `src/controllers/session.controller.ts` - REST handlers (create, get, getCode)
+- [ ] `src/routes/session.routes.ts` - Express routes for sessions
+- [ ] `src/socket/index.ts` - Socket.io server initialization
+- [ ] `src/socket/handlers/session.handler.ts` - Join/leave event logic
+- [ ] `src/socket/handlers/code.handler.ts` - Code sync + language change events
+
+### Files to Modify
+- [ ] `src/index.ts` - Replace app.listen() with httpServer + Socket.io
+- [ ] `src/routes/api.routes.ts` - Mount session routes
+- [ ] `openapi.yaml` - Document session endpoints
+
+### API Endpoints to Implement
+- [ ] `POST /api/sessions` - Create session (body: { language })
+- [ ] `GET /api/sessions/:id` - Get session metadata
+- [ ] `GET /api/sessions/:id/code` - Get current code state
+
+### Socket.io Events to Implement
+- [ ] Client→Server: join-session, code-change, language-change, cursor-move
+- [ ] Server→Client: session-joined, user-joined, user-left, code-update, language-update, cursor-update, error
+
+### Testing
+- [ ] Test session creation via API
+- [ ] Test WebSocket join/leave flow
+- [ ] Test code-change broadcast to multiple users
+
+---
+
+## Phase 2: Frontend Routing + Basic UI ⬜
+**Goal:** Navigation structure and session creation
+
+### Dependencies
+- [ ] `cd apps/frontend && pnpm add react-router-dom`
+- [ ] `pnpm add -D @types/react-router-dom`
+
+### Files to Create
+- [ ] `src/types/session.ts` - Frontend types
+- [ ] `src/lib/api.ts` - HTTP client functions
+- [ ] `src/router.tsx` - React Router configuration
+- [ ] `src/pages/HomePage.tsx` - Landing page with language selector + "Create Session"
+- [ ] `src/pages/SessionPage.tsx` - Collaborative editor page (skeleton)
+- [ ] `src/pages/SessionNotFoundPage.tsx` - Error page for invalid sessions
+
+### Files to Modify
+- [ ] `src/App.tsx` - Replace with RouterProvider
+
+### Features to Implement
+- [ ] HomePage: Language selector dropdown (JavaScript, Python, TypeScript, Go, Java, C++)
+- [ ] HomePage: "Create Session" button → POST /api/sessions → navigate to /session/:id
+- [ ] SessionPage: Extract sessionId from URL params
+- [ ] SessionPage: Fetch session metadata (GET /api/sessions/:id)
+- [ ] SessionPage: Display shareable link with copy button
+- [ ] SessionPage: Show loading state while fetching
+
+### Testing
+- [ ] Navigate from home to session page
+- [ ] Copy shareable link
+- [ ] Handle invalid session ID (redirect to error page)
+
+---
+
+## Phase 3: Monaco Editor Integration ⬜
+**Goal:** Working code editor with syntax highlighting
+
+### Dependencies
+- [ ] `cd apps/frontend && pnpm add @monaco-editor/react monaco-editor`
+
+### Files to Create
+- [ ] `src/components/CodeEditor.tsx` - Monaco wrapper component
+- [ ] `src/components/LanguageSelector.tsx` - Dropdown for language switching
+- [ ] `src/components/ShareLink.tsx` - Shareable link with copy functionality
+
+### Features to Implement
+- [ ] CodeEditor: Monaco integration with dark theme
+- [ ] CodeEditor: Support for javascript, typescript, python, java, go, cpp
+- [ ] CodeEditor: onChange handler for local state
+- [ ] LanguageSelector: Dropdown with supported languages
+- [ ] SessionPage: Integrate CodeEditor + LanguageSelector
+- [ ] SessionPage: Fetch initial code via GET /api/sessions/:id/code
+
+### Configuration
+- [ ] Monaco options: minimap, fontSize: 14, wordWrap: on, automaticLayout: true
+
+### Testing
+- [ ] Type code in editor, verify syntax highlighting
+- [ ] Change language, verify highlighting updates
+- [ ] Verify editor persists state on language change
+
+---
+
+## Phase 4: Real-time Collaboration ⬜
+**Goal:** Multi-user code sync via WebSocket
+
+### Dependencies
+- [ ] `cd apps/frontend && pnpm add socket.io-client`
+
+### Files to Create
+- [ ] `src/lib/socket.ts` - Socket.io client instance
+- [ ] `src/hooks/useSocket.ts` - Connection management hook
+- [ ] `src/hooks/useCollaboration.ts` - Code sync logic with debouncing
+
+### Files to Modify
+- [ ] `vite.config.ts` - Add WebSocket proxy for /socket.io
+
+### Features to Implement
+- [ ] Socket.io client: autoConnect: false, reconnection: true, 5 attempts
+- [ ] SessionPage: Prompt for username on mount (dialog)
+- [ ] SessionPage: Connect socket + emit join-session with sessionId + username
+- [ ] useCollaboration: Debounce code changes (300ms) before emitting
+- [ ] useCollaboration: Listen for code-update events
+- [ ] useCollaboration: Update editor on remote changes (preserve cursor if typing)
+- [ ] SessionPage: Emit leave-session + disconnect on unmount
+- [ ] Reconnection: On refresh, fetch code state + rejoin session
+
+### Testing
+- [ ] Open session in two tabs, edit in one, verify update in other
+- [ ] Refresh page, verify reconnection to session
+- [ ] Close one tab, verify no errors in other tab
+
+---
+
+## Phase 5: User Presence ⬜
+**Goal:** Show connected users + connection status
+
+### Files to Create
+- [ ] `src/components/UserList.tsx` - Display connected users
+- [ ] `src/components/ConnectionStatus.tsx` - WebSocket status indicator
+
+### Features to Implement
+- [ ] UserList: Listen for user-joined, user-left events
+- [ ] UserList: Display list of usernames
+- [ ] UserList: Show user count badge
+- [ ] ConnectionStatus: Display connection state (connected/reconnecting/disconnected)
+- [ ] ConnectionStatus: Color-coded indicator (green/yellow/red)
+- [ ] SessionPage: Integrate UserList + ConnectionStatus in header
+
+### Layout
+- [ ] Header: ShareLink | LanguageSelector | UserList | ConnectionStatus
+- [ ] Main: CodeEditor (full height)
+
+### Testing
+- [ ] Join session with multiple users, verify all appear in UserList
+- [ ] Disconnect internet, verify "Reconnecting" status
+- [ ] Close one tab, verify user removed from list in other tabs
+
+---
+
+## Phase 6: Polish + Error Handling ⬜
+**Goal:** Production-ready UX
+
+### Backend Tasks
+- [ ] `src/services/session-cleanup.service.ts` - TTL-based cleanup (1 hour)
+- [ ] Session cleanup: setInterval every 10 mins
+- [ ] Session cleanup: Delete empty sessions after 5 mins
+- [ ] Integrate cleanup service in src/index.ts
+
+### Frontend Tasks
+- [ ] `src/components/ErrorBoundary.tsx` - React error boundary
+- [ ] Loading states: Skeleton loader while fetching session
+- [ ] Loading states: "Connecting..." for WebSocket
+- [ ] Loading states: Disabled editor until connected
+- [ ] Error handling: Session not found → SessionNotFoundPage
+- [ ] Error handling: Session expired → show message + "Create New" button
+- [ ] UI: Tailwind styling for all components
+- [ ] UI: Responsive layout (header stacks on mobile)
+- [ ] UI: Copy link feedback (toast or "Copied!" text)
+- [ ] UI: Username dialog styling
+- [ ] Edge case: Duplicate usernames → append number (John, John-2)
+- [ ] Edge case: Empty sessionId in URL → redirect to home
+- [ ] Edge case: WebSocket disconnect → show reconnecting banner
+
+### Testing
+- [ ] Test all error scenarios
+- [ ] Verify loading states
+- [ ] Test on mobile viewport
+- [ ] Verify session cleanup after 1 hour idle
+
+---
+
+## Phase 7: Testing ⬜
+**Goal:** Comprehensive test coverage
+
+### Backend Tests
+- [ ] Session service: Create, get, delete operations
+- [ ] Session service: Cleanup logic (TTL)
+- [ ] Socket.io: Join session event flow
+- [ ] Socket.io: Code-change broadcast to multiple users
+- [ ] Socket.io: User disconnect handling
+
+### Frontend Tests
+- [ ] Component: CodeEditor renders and handles changes
+- [ ] Component: LanguageSelector changes language
+- [ ] Component: UserList displays users and updates on join/leave
+- [ ] Component: ShareLink copies to clipboard
+- [ ] Integration: SessionPage loads session and connects socket
+- [ ] Integration: Router navigation from home to session
+
+### Manual Testing Checklist
+- [ ] Create session → navigate to session page
+- [ ] Copy link, open in incognito → join same session
+- [ ] Edit code in one tab → see update in other tab
+- [ ] Change language → both tabs update
+- [ ] Close one tab → other tab shows user left
+- [ ] Refresh page → reconnect to session
+- [ ] Idle session for 1 hour → session expires
+
+---
+
+## OpenAPI Spec Updates
+
+```yaml
+/api/sessions:
+  post:
+    summary: Create a new coding session
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              language:
+                type: string
+                enum: [javascript, typescript, python, java, go, cpp]
+    responses:
+      201:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sessionId:
+                  type: string
+                expiresIn:
+                  type: number
+
+/api/sessions/{id}:
+  get:
+    summary: Get session metadata
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sessionId:
+                  type: string
+                language:
+                  type: string
+                userCount:
+                  type: number
+                exists:
+                  type: boolean
+
+/api/sessions/{id}/code:
+  get:
+    summary: Get current code content
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                language:
+                  type: string
+```
+
+---
+
+## Unresolved Questions
+
+1. **Cursor colors:** Random per user or fixed palette?
+2. **Max users:** Unlimited or cap at 10 for performance?
+3. **Username dialog:** Modal or inline input?
+4. **Copy link feedback:** Toast notification or inline "Copied!"?
+5. **Reconnection UX:** Banner or silent retry?
+
+---
+
+## Future Enhancements (Post-MVP)
+
+- Operational Transform for conflict-free editing
+- Redis/PostgreSQL for session persistence
+- Code execution (Judge0 API or Docker sandbox)
+- Text chat alongside editor
+- Version history with undo/redo
+- Light/dark theme toggle
+- Shareable code snippets export
+- User authentication and session ownership
