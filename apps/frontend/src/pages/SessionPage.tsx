@@ -122,8 +122,23 @@ export function SessionPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading session...</div>
+      <div className="h-screen bg-slate-900 flex flex-col">
+        <header className="bg-slate-800 border-b border-slate-700 px-4 md:px-6 py-3 md:py-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="h-6 w-32 bg-slate-700 rounded animate-pulse" />
+              <div className="h-8 w-36 md:w-48 bg-slate-700 rounded animate-pulse" />
+            </div>
+            <div className="flex items-center gap-4 md:gap-6 flex-wrap">
+              <div className="h-8 w-28 md:w-32 bg-slate-700 rounded animate-pulse" />
+              <div className="h-8 w-20 md:w-24 bg-slate-700 rounded animate-pulse" />
+              <div className="h-8 w-20 bg-slate-700 rounded animate-pulse" />
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 p-3 md:p-6 flex items-center justify-center">
+          <div className="text-white text-lg md:text-xl">Loading session...</div>
+        </main>
       </div>
     );
   }
@@ -161,14 +176,26 @@ export function SessionPage() {
       )}
 
       <div className={`h-screen bg-slate-900 flex flex-col ${showUsernameDialog ? 'blur-sm' : ''}`}>
-      <header className="bg-slate-800 border-b border-slate-700 px-6 py-4 flex-shrink-0">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-white">CodeCollab</h1>
+      {/* Reconnecting Banner */}
+      {status === 'reconnecting' && (
+        <div className="bg-yellow-600 text-white px-4 py-2 text-center text-sm font-medium">
+          Connection lost. Attempting to reconnect...
+        </div>
+      )}
+      {status === 'disconnected' && (
+        <div className="bg-red-600 text-white px-4 py-2 text-center text-sm font-medium">
+          Disconnected. Please refresh the page to reconnect.
+        </div>
+      )}
+
+      <header className="bg-slate-800 border-b border-slate-700 px-4 md:px-6 py-3 md:py-4 flex-shrink-0">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4">
+          <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
+            <h1 className="text-lg md:text-xl font-bold text-white">CodeCollab</h1>
             <ShareLink sessionId={sessionId!} />
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-between md:justify-end flex-wrap">
             <LanguageSelector value={language} onChange={handleLanguageChange} />
             <UserList socket={socket} />
             <ConnectionStatus status={status} />
@@ -176,9 +203,14 @@ export function SessionPage() {
         </div>
       </header>
 
-      <main className="flex-1 p-6 overflow-hidden">
+      <main className="flex-1 p-3 md:p-6 overflow-hidden">
         <div className="h-full bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
-          <CodeEditor value={code} language={language} onChange={handleCodeChange} />
+          <CodeEditor
+            value={code}
+            language={language}
+            onChange={handleCodeChange}
+            disabled={status !== 'connected'}
+          />
         </div>
       </main>
       </div>

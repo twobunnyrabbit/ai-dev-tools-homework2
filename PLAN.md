@@ -165,35 +165,36 @@ Real-time collaborative code editor for online interviews with shareable links, 
 
 ---
 
-## Phase 6: Polish + Error Handling ⬜
+## Phase 6: Polish + Error Handling ✅
 **Goal:** Production-ready UX
 
 ### Backend Tasks
-- [ ] `src/services/session-cleanup.service.ts` - TTL-based cleanup (1 hour)
-- [ ] Session cleanup: setInterval every 10 mins
-- [ ] Session cleanup: Delete empty sessions after 5 mins
-- [ ] Integrate cleanup service in src/index.ts
+- [x] `src/services/session-cleanup.service.ts` - TTL-based cleanup (1 hour)
+- [x] Session cleanup: setInterval every 10 mins
+- [x] Session cleanup: Delete empty sessions after 5 mins
+- [x] Integrate cleanup service in src/index.ts
+- [x] Graceful shutdown handlers (SIGTERM, SIGINT)
 
 ### Frontend Tasks
-- [ ] `src/components/ErrorBoundary.tsx` - React error boundary
-- [ ] Loading states: Skeleton loader while fetching session
-- [ ] Loading states: "Connecting..." for WebSocket
-- [ ] Loading states: Disabled editor until connected
-- [ ] Error handling: Session not found → SessionNotFoundPage
-- [ ] Error handling: Session expired → show message + "Create New" button
-- [ ] UI: Tailwind styling for all components
-- [ ] UI: Responsive layout (header stacks on mobile)
-- [ ] UI: Copy link feedback (toast or "Copied!" text)
-- [ ] UI: Username dialog styling
-- [ ] Edge case: Duplicate usernames → append number (John, John-2)
-- [ ] Edge case: Empty sessionId in URL → redirect to home
-- [ ] Edge case: WebSocket disconnect → show reconnecting banner
+- [x] `src/components/ErrorBoundary.tsx` - React error boundary
+- [x] Loading states: Skeleton loader while fetching session
+- [x] Loading states: "Connecting..." for WebSocket
+- [x] Loading states: Disabled editor until connected
+- [x] Error handling: Session not found → SessionNotFoundPage
+- [x] Error handling: Session expired → show message + "Create New" button
+- [x] UI: Tailwind styling for all components
+- [x] UI: Responsive layout (header stacks on mobile)
+- [x] UI: Copy link feedback (toast or "Copied!" text)
+- [x] UI: Username dialog styling
+- [x] Edge case: Duplicate usernames → append number (John, John-2)
+- [x] Edge case: Empty sessionId in URL → redirect to home
+- [x] Edge case: WebSocket disconnect → show reconnecting banner
 
 ### Testing
-- [ ] Test all error scenarios
-- [ ] Verify loading states
-- [ ] Test on mobile viewport
-- [ ] Verify session cleanup after 1 hour idle
+- [x] Test all error scenarios
+- [x] Verify loading states
+- [x] Test on mobile viewport
+- [x] Verify session cleanup after 1 hour idle
 
 ---
 

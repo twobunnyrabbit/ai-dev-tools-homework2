@@ -120,8 +120,16 @@ Uses ESM modules (`.js` extensions in imports required).
   - User count badge and overflow handling (max 5 avatars shown)
   - Duplicate username handling with auto-incrementing numbers
   - Integrated header layout: ShareLink | LanguageSelector | UserList | ConnectionStatus
-- ⬜ **Phase 6: Polish + Error Handling** - Next up
-- ⬜ **Phase 7: Testing**
+- ✅ **Phase 6: Polish + Error Handling** - Complete
+  - Session cleanup service with TTL-based cleanup (1 hour idle, 5 min empty)
+  - React ErrorBoundary for error handling
+  - Loading states with skeleton loaders
+  - Editor disabled until connected with overlay
+  - Reconnecting/disconnected banners
+  - Responsive mobile layout (header stacks on mobile)
+  - Copy link feedback ("Copied!" state)
+  - Graceful shutdown handlers (SIGTERM, SIGINT)
+- ⬜ **Phase 7: Testing** - Next up
 
 **Key Features:**
 - Shareable session links for interviews
