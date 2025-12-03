@@ -21,6 +21,87 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
+  /api/sessions:
+    post:
+      summary: Create a new coding session
+      description: Creates a new collaborative coding session with the specified language
+      operationId: createSession
+      tags:
+        - Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - language
+              properties:
+                language:
+                  type: string
+                  enum: [javascript, typescript, python, java, go, cpp]
+                  description: Programming language for the session
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSessionResponse'
+        '400':
+          description: Invalid or missing language
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/sessions/{id}:
+    get:
+      summary: Get session metadata
+      description: Returns metadata about a coding session
+      operationId: getSessionMetadata
+      tags:
+        - Sessions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Session ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionMetadata'
+  /api/sessions/{id}/code:
+    get:
+      summary: Get current code content
+      description: Returns the current code and language for a session
+      operationId: getSessionCode
+      tags:
+        - Sessions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Session ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current code content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionCode'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     HealthResponse:
@@ -36,3 +117,64 @@ components:
           type: string
           format: date-time
           example: '2025-12-03T10:30:00.000Z'
+    CreateSessionResponse:
+      type: object
+      required:
+        - sessionId
+        - expiresIn
+      properties:
+        sessionId:
+          type: string
+          description: Unique identifier for the session
+          example: 'abc123xyz'
+        expiresIn:
+          type: number
+          description: Time until session expires in milliseconds
+          example: 3600000
+    SessionMetadata:
+      type: object
+      required:
+        - sessionId
+        - language
+        - userCount
+        - exists
+      properties:
+        sessionId:
+          type: string
+          description: Unique identifier for the session
+          example: 'abc123xyz'
+        language:
+          type: string
+          enum: [javascript, typescript, python, java, go, cpp]
+          description: Programming language for the session
+        userCount:
+          type: number
+          description: Number of users currently in the session
+          example: 2
+        exists:
+          type: boolean
+          description: Whether the session exists
+          example: true
+    SessionCode:
+      type: object
+      required:
+        - code
+        - language
+      properties:
+        code:
+          type: string
+          description: Current code content
+          example: 'console.log("Hello, world!");'
+        language:
+          type: string
+          enum: [javascript, typescript, python, java, go, cpp]
+          description: Programming language for the session
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: 'Invalid or missing language'

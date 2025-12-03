@@ -7,41 +7,41 @@ Real-time collaborative code editor for online interviews with shareable links, 
 
 ---
 
-## Phase 1: Backend Foundation ⬜
+## Phase 1: Backend Foundation ✅
 **Goal:** API + WebSocket infrastructure
 
 ### Dependencies
-- [ ] `cd apps/backend && pnpm add socket.io`
-- [ ] `pnpm add -D @types/socket.io`
+- [x] `cd apps/backend && pnpm add socket.io`
+- [x] `pnpm add -D @types/socket.io`
 
 ### Files to Create
-- [ ] `src/types/session.types.ts` - TypeScript interfaces (Session, User)
-- [ ] `src/utils/id-generator.ts` - Session ID generation (crypto.randomBytes)
-- [ ] `src/services/session.service.ts` - In-memory CRUD (Map-based storage)
-- [ ] `src/controllers/session.controller.ts` - REST handlers (create, get, getCode)
-- [ ] `src/routes/session.routes.ts` - Express routes for sessions
-- [ ] `src/socket/index.ts` - Socket.io server initialization
-- [ ] `src/socket/handlers/session.handler.ts` - Join/leave event logic
-- [ ] `src/socket/handlers/code.handler.ts` - Code sync + language change events
+- [x] `src/types/session.types.ts` - TypeScript interfaces (Session, User)
+- [x] `src/utils/id-generator.ts` - Session ID generation (crypto.randomBytes)
+- [x] `src/services/session.service.ts` - In-memory CRUD (Map-based storage)
+- [x] `src/controllers/session.controller.ts` - REST handlers (create, get, getCode)
+- [x] `src/routes/session.routes.ts` - Express routes for sessions
+- [x] `src/socket/index.ts` - Socket.io server initialization
+- [x] `src/socket/handlers/session.handler.ts` - Join/leave event logic
+- [x] `src/socket/handlers/code.handler.ts` - Code sync + language change events
 
 ### Files to Modify
-- [ ] `src/index.ts` - Replace app.listen() with httpServer + Socket.io
-- [ ] `src/routes/api.routes.ts` - Mount session routes
-- [ ] `openapi.yaml` - Document session endpoints
+- [x] `src/index.ts` - Replace app.listen() with httpServer + Socket.io
+- [x] `src/routes/api.routes.ts` - Mount session routes
+- [x] `openapi.yaml` - Document session endpoints
 
 ### API Endpoints to Implement
-- [ ] `POST /api/sessions` - Create session (body: { language })
-- [ ] `GET /api/sessions/:id` - Get session metadata
-- [ ] `GET /api/sessions/:id/code` - Get current code state
+- [x] `POST /api/sessions` - Create session (body: { language })
+- [x] `GET /api/sessions/:id` - Get session metadata
+- [x] `GET /api/sessions/:id/code` - Get current code state
 
 ### Socket.io Events to Implement
-- [ ] Client→Server: join-session, code-change, language-change, cursor-move
-- [ ] Server→Client: session-joined, user-joined, user-left, code-update, language-update, cursor-update, error
+- [x] Client→Server: join-session, code-change, language-change, cursor-move
+- [x] Server→Client: session-joined, user-joined, user-left, code-update, language-update, cursor-update, error
 
 ### Testing
-- [ ] Test session creation via API
-- [ ] Test WebSocket join/leave flow
-- [ ] Test code-change broadcast to multiple users
+- [x] Test session creation via API
+- [x] Test WebSocket join/leave flow
+- [x] Test code-change broadcast to multiple users
 
 ---
 

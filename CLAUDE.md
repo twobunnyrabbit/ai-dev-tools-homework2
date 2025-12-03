@@ -38,10 +38,13 @@ pnpm generate:types     # Generate TypeScript types from openapi.yaml
 ## Architecture
 
 ### Backend
-- **Entry**: `apps/backend/src/index.ts` - Server initialization with dotenv config
+- **Entry**: `apps/backend/src/index.ts` - Server initialization with HTTP server + Socket.io
 - **App setup**: `apps/backend/src/app.ts` - Express app, CORS, Swagger UI at `/api-docs`
 - **Routes**: `apps/backend/src/routes/` - API route definitions (all prefixed with `/api`)
 - **Controllers**: `apps/backend/src/controllers/` - Request handlers
+- **Services**: `apps/backend/src/services/` - Business logic (session management)
+- **Socket.io**: `apps/backend/src/socket/` - WebSocket handlers for real-time collaboration
+- **Types**: `apps/backend/src/types/` - TypeScript interfaces
 - **Middleware**: `apps/backend/src/middleware/` - Error handling, etc.
 - **API spec**: `apps/backend/openapi.yaml` - OpenAPI 3.0 specification
 
@@ -75,6 +78,15 @@ Uses ESM modules (`.js` extensions in imports required).
 
 **Implementation Plan:** See `PLAN.md` in the root directory for the complete 7-phase implementation plan with detailed checklists.
 
+**Progress:**
+- ✅ **Phase 1: Backend Foundation** - REST API + Socket.io infrastructure complete
+  - Session CRUD operations with in-memory storage
+  - WebSocket handlers for real-time collaboration
+  - API endpoints: POST /api/sessions, GET /api/sessions/:id, GET /api/sessions/:id/code
+  - Socket.io events for join/leave, code sync, language changes, cursor position
+- ⬜ **Phase 2: Frontend Routing + Basic UI** - Next up
+- ⬜ **Phase 3-7**: Remaining phases
+
 **Key Features:**
 - Shareable session links for interviews
 - Real-time collaborative code editing (Socket.io WebSockets)
@@ -82,4 +94,4 @@ Uses ESM modules (`.js` extensions in imports required).
 - In-memory session storage (ephemeral)
 - User presence and connection status
 
-**When starting a new session:** Reference `PLAN.md` to understand the implementation roadmap and track progress through the phases.
+**When continuing work:** Reference `PLAN.md` to understand the implementation roadmap and track progress through the phases.
