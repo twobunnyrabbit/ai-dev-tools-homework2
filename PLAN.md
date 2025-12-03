@@ -78,32 +78,32 @@ Real-time collaborative code editor for online interviews with shareable links, 
 
 ---
 
-## Phase 3: Monaco Editor Integration ⬜
+## Phase 3: Monaco Editor Integration ✅
 **Goal:** Working code editor with syntax highlighting
 
 ### Dependencies
-- [ ] `cd apps/frontend && pnpm add @monaco-editor/react monaco-editor`
+- [x] `cd apps/frontend && pnpm add @monaco-editor/react monaco-editor`
 
 ### Files to Create
-- [ ] `src/components/CodeEditor.tsx` - Monaco wrapper component
-- [ ] `src/components/LanguageSelector.tsx` - Dropdown for language switching
-- [ ] `src/components/ShareLink.tsx` - Shareable link with copy functionality
+- [x] `src/components/CodeEditor.tsx` - Monaco wrapper component
+- [x] `src/components/LanguageSelector.tsx` - Dropdown for language switching
+- [x] `src/components/ShareLink.tsx` - Shareable link with copy functionality
 
 ### Features to Implement
-- [ ] CodeEditor: Monaco integration with dark theme
-- [ ] CodeEditor: Support for javascript, typescript, python, java, go, cpp
-- [ ] CodeEditor: onChange handler for local state
-- [ ] LanguageSelector: Dropdown with supported languages
-- [ ] SessionPage: Integrate CodeEditor + LanguageSelector
-- [ ] SessionPage: Fetch initial code via GET /api/sessions/:id/code
+- [x] CodeEditor: Monaco integration with dark theme
+- [x] CodeEditor: Support for javascript, typescript, python, java, go, cpp
+- [x] CodeEditor: onChange handler for local state
+- [x] LanguageSelector: Dropdown with supported languages
+- [x] SessionPage: Integrate CodeEditor + LanguageSelector
+- [x] SessionPage: Fetch initial code via GET /api/sessions/:id/code
 
 ### Configuration
-- [ ] Monaco options: minimap, fontSize: 14, wordWrap: on, automaticLayout: true
+- [x] Monaco options: minimap, fontSize: 14, wordWrap: on, automaticLayout: true
 
 ### Testing
-- [ ] Type code in editor, verify syntax highlighting
-- [ ] Change language, verify highlighting updates
-- [ ] Verify editor persists state on language change
+- [x] Type code in editor, verify syntax highlighting
+- [x] Change language, verify highlighting updates
+- [x] Verify editor persists state on language change
 
 ---
 

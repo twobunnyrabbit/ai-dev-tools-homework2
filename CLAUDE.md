@@ -51,11 +51,12 @@ pnpm generate:types     # Generate TypeScript types from openapi.yaml
 Uses ESM modules (`.js` extensions in imports required).
 
 ### Frontend
-- Built with React 19, Vite, Tailwind CSS, React Router
+- Built with React 19, Vite, Tailwind CSS, React Router, Monaco Editor
 - Includes shadcn/ui utilities (`class-variance-authority`, `clsx`, `tailwind-merge`)
 - TypeScript with strict mode enabled
 - **Router**: `src/router.tsx` - Route configuration for /, /session/:id, /session-not-found
 - **Pages**: `src/pages/` - HomePage, SessionPage, SessionNotFoundPage
+- **Components**: `src/components/` - CodeEditor, LanguageSelector, ShareLink
 - **Types**: `src/types/session.ts` - Frontend TypeScript types
 - **API Client**: `src/lib/api.ts` - HTTP client for backend REST API
 
@@ -94,8 +95,15 @@ Uses ESM modules (`.js` extensions in imports required).
   - Homepage with language selector and "Create Session" button
   - Session page with shareable link, copy functionality, metadata display
   - Frontend types and error handling
-- ⬜ **Phase 3: Monaco Editor Integration** - Next up
-- ⬜ **Phase 4-7**: Remaining phases
+- ✅ **Phase 3: Monaco Editor Integration** - Working code editor complete
+  - Monaco Editor wrapper component with dark theme
+  - Support for 6 languages: JavaScript, TypeScript, Python, Java, Go, C++
+  - LanguageSelector dropdown component
+  - ShareLink component with copy-to-clipboard
+  - SessionPage integrated with CodeEditor
+  - Proper height/layout configuration for full-screen editor
+- ⬜ **Phase 4: Real-time Collaboration** - Next up
+- ⬜ **Phase 5-7**: Remaining phases
 
 **Key Features:**
 - Shareable session links for interviews
