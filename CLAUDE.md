@@ -130,6 +130,11 @@ Uses ESM modules (`.js` extensions in imports required).
   - Copy link feedback ("Copied!" state)
   - Graceful shutdown handlers (SIGTERM, SIGINT)
 - ⬜ **Phase 7: Testing** - Next up
+- ⬜ **Phase 8: Code Execution** - Planned (see `~/.claude/plans/happy-stargazing-tarjan.md`)
+  - Browser-based execution for JS, TS, Python
+  - Web Workers + Pyodide WASM
+  - Output panel with real-time sharing
+  - 7-phase implementation (MVP: 3-5 days)
 
 **Key Features:**
 - Shareable session links for interviews
