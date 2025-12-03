@@ -10,7 +10,9 @@
     "build:frontend": "pnpm --filter frontend build",
     "build:backend": "pnpm --filter backend build",
     "type-check": "pnpm -r type-check",
-    "generate:types": "pnpm --filter @repo/api-types generate"
+    "generate:types": "pnpm --filter @repo/api-types generate",
+    "test": "pnpm -r test",
+    "test:backend": "pnpm --filter backend test"
   },
   "devDependencies": {
     "typescript": "^5.7.2"

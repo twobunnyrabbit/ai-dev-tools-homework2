@@ -1,3 +1,5 @@
+# Question 1
+
 The prompt is used in Claude Code in planning mode.
 
 ## Initial setup
@@ -11,3 +13,17 @@ First, I need assistance in setting up the environment.
 I want to code the frontend in React/Typescript with Vite and backend with express.js. Use `pnpm` as node package manager. This will be version controlled with git.
 
 Ask me any clarification questions if needed and after that, present me with your plan for me to review before proceeding.
+
+# Question 2
+
+Running tests:
+pnpm test # All packages
+pnpm test:backend # Backend only
+pnpm test:watch # Watch mode (from backend dir)
+pnpm test:coverage # Coverage report
+
+# Question 3
+
+pnpm dev
+
+# Question 4
