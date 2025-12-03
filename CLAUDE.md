@@ -51,14 +51,16 @@ pnpm generate:types     # Generate TypeScript types from openapi.yaml
 Uses ESM modules (`.js` extensions in imports required).
 
 ### Frontend
-- Built with React 19, Vite, Tailwind CSS, React Router, Monaco Editor
+- Built with React 19, Vite, Tailwind CSS, React Router, Monaco Editor, Socket.io Client
 - Includes shadcn/ui utilities (`class-variance-authority`, `clsx`, `tailwind-merge`)
 - TypeScript with strict mode enabled
 - **Router**: `src/router.tsx` - Route configuration for /, /session/:id, /session-not-found
 - **Pages**: `src/pages/` - HomePage, SessionPage, SessionNotFoundPage
 - **Components**: `src/components/` - CodeEditor, LanguageSelector, ShareLink
+- **Hooks**: `src/hooks/` - useSocket (connection management), useCollaboration (code sync with debouncing)
 - **Types**: `src/types/session.ts` - Frontend TypeScript types
 - **API Client**: `src/lib/api.ts` - HTTP client for backend REST API
+- **Socket Client**: `src/lib/socket.ts` - Socket.io client instance with reconnection support
 
 ### Type Generation Workflow
 1. Update `apps/backend/openapi.yaml` with API changes
@@ -102,14 +104,25 @@ Uses ESM modules (`.js` extensions in imports required).
   - ShareLink component with copy-to-clipboard
   - SessionPage integrated with CodeEditor
   - Proper height/layout configuration for full-screen editor
-- ⬜ **Phase 4: Real-time Collaboration** - Next up
-- ⬜ **Phase 5-7**: Remaining phases
+- ✅ **Phase 4: Real-time Collaboration** - Multi-user code sync complete
+  - Socket.io client with connection management and auto-reconnection
+  - useSocket hook for connection status tracking (connected/reconnecting/disconnected)
+  - useCollaboration hook with 300ms debouncing for code changes
+  - Username dialog on session join
+  - Real-time code and language synchronization between users
+  - Connection status indicator with color-coded states
+  - Clean socket disconnect on unmount
+  - WebSocket proxy in Vite for /socket.io path
+- ⬜ **Phase 5: User Presence** - Next up
+- ⬜ **Phase 6-7**: Remaining phases
 
 **Key Features:**
 - Shareable session links for interviews
 - Real-time collaborative code editing (Socket.io WebSockets)
-- Monaco Editor with multi-language syntax highlighting
+- Monaco Editor with multi-language syntax highlighting (6 languages)
 - In-memory session storage (ephemeral)
-- User presence and connection status
+- Connection status indicator with auto-reconnection
+- Username-based session participation
+- Debounced code synchronization (300ms) for performance
 
 **When continuing work:** Reference `PLAN.md` to understand the implementation roadmap and track progress through the phases.

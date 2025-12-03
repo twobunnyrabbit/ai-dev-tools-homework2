@@ -107,34 +107,35 @@ Real-time collaborative code editor for online interviews with shareable links, 
 
 ---
 
-## Phase 4: Real-time Collaboration ⬜
+## Phase 4: Real-time Collaboration ✅
 **Goal:** Multi-user code sync via WebSocket
 
 ### Dependencies
-- [ ] `cd apps/frontend && pnpm add socket.io-client`
+- [x] `cd apps/frontend && pnpm add socket.io-client`
 
 ### Files to Create
-- [ ] `src/lib/socket.ts` - Socket.io client instance
-- [ ] `src/hooks/useSocket.ts` - Connection management hook
-- [ ] `src/hooks/useCollaboration.ts` - Code sync logic with debouncing
+- [x] `src/lib/socket.ts` - Socket.io client instance
+- [x] `src/hooks/useSocket.ts` - Connection management hook
+- [x] `src/hooks/useCollaboration.ts` - Code sync logic with debouncing
 
 ### Files to Modify
-- [ ] `vite.config.ts` - Add WebSocket proxy for /socket.io
+- [x] `vite.config.ts` - Add WebSocket proxy for /socket.io
 
 ### Features to Implement
-- [ ] Socket.io client: autoConnect: false, reconnection: true, 5 attempts
-- [ ] SessionPage: Prompt for username on mount (dialog)
-- [ ] SessionPage: Connect socket + emit join-session with sessionId + username
-- [ ] useCollaboration: Debounce code changes (300ms) before emitting
-- [ ] useCollaboration: Listen for code-update events
-- [ ] useCollaboration: Update editor on remote changes (preserve cursor if typing)
-- [ ] SessionPage: Emit leave-session + disconnect on unmount
-- [ ] Reconnection: On refresh, fetch code state + rejoin session
+- [x] Socket.io client: autoConnect: false, reconnection: true, 5 attempts
+- [x] SessionPage: Prompt for username on mount (dialog)
+- [x] SessionPage: Connect socket + emit join-session with sessionId + username
+- [x] useCollaboration: Debounce code changes (300ms) before emitting
+- [x] useCollaboration: Listen for code-update events
+- [x] useCollaboration: Update editor on remote changes (preserve cursor if typing)
+- [x] SessionPage: Emit leave-session + disconnect on unmount
+- [x] Reconnection: On refresh, fetch code state + rejoin session
+- [x] SessionPage: Connection status indicator (green/yellow/red)
 
 ### Testing
-- [ ] Open session in two tabs, edit in one, verify update in other
-- [ ] Refresh page, verify reconnection to session
-- [ ] Close one tab, verify no errors in other tab
+- [x] Open session in two tabs, edit in one, verify update in other
+- [x] Refresh page, verify reconnection to session
+- [x] Close one tab, verify no errors in other tab
 
 ---
 
