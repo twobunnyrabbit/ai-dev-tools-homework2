@@ -56,7 +56,7 @@ Uses ESM modules (`.js` extensions in imports required).
 - TypeScript with strict mode enabled
 - **Router**: `src/router.tsx` - Route configuration for /, /session/:id, /session-not-found
 - **Pages**: `src/pages/` - HomePage, SessionPage, SessionNotFoundPage
-- **Components**: `src/components/` - CodeEditor, LanguageSelector, ShareLink
+- **Components**: `src/components/` - CodeEditor, LanguageSelector, ShareLink, UserList, ConnectionStatus
 - **Hooks**: `src/hooks/` - useSocket (connection management), useCollaboration (code sync with debouncing)
 - **Types**: `src/types/session.ts` - Frontend TypeScript types
 - **API Client**: `src/lib/api.ts` - HTTP client for backend REST API
@@ -108,21 +108,30 @@ Uses ESM modules (`.js` extensions in imports required).
   - Socket.io client with connection management and auto-reconnection
   - useSocket hook for connection status tracking (connected/reconnecting/disconnected)
   - useCollaboration hook with 300ms debouncing for code changes
-  - Username dialog on session join
+  - Username dialog on session join with blur effect on editor
   - Real-time code and language synchronization between users
   - Connection status indicator with color-coded states
   - Clean socket disconnect on unmount
   - WebSocket proxy in Vite for /socket.io path
-- ⬜ **Phase 5: User Presence** - Next up
-- ⬜ **Phase 6-7**: Remaining phases
+- ✅ **Phase 5: User Presence** - Complete
+  - UserList component showing connected users with avatar circles
+  - ConnectionStatus component with color-coded indicators (green/yellow/red)
+  - Real-time user join/leave notifications
+  - User count badge and overflow handling (max 5 avatars shown)
+  - Duplicate username handling with auto-incrementing numbers
+  - Integrated header layout: ShareLink | LanguageSelector | UserList | ConnectionStatus
+- ⬜ **Phase 6: Polish + Error Handling** - Next up
+- ⬜ **Phase 7: Testing**
 
 **Key Features:**
 - Shareable session links for interviews
 - Real-time collaborative code editing (Socket.io WebSockets)
 - Monaco Editor with multi-language syntax highlighting (6 languages)
 - In-memory session storage (ephemeral)
+- Live user presence with avatar display
 - Connection status indicator with auto-reconnection
-- Username-based session participation
+- Username-based session participation with duplicate handling
 - Debounced code synchronization (300ms) for performance
+- Username dialog with blur effect on editor during join
 
 **When continuing work:** Reference `PLAN.md` to understand the implementation roadmap and track progress through the phases.

@@ -139,29 +139,29 @@ Real-time collaborative code editor for online interviews with shareable links, 
 
 ---
 
-## Phase 5: User Presence ⬜
+## Phase 5: User Presence ✅
 **Goal:** Show connected users + connection status
 
 ### Files to Create
-- [ ] `src/components/UserList.tsx` - Display connected users
-- [ ] `src/components/ConnectionStatus.tsx` - WebSocket status indicator
+- [x] `src/components/UserList.tsx` - Display connected users
+- [x] `src/components/ConnectionStatus.tsx` - WebSocket status indicator
 
 ### Features to Implement
-- [ ] UserList: Listen for user-joined, user-left events
-- [ ] UserList: Display list of usernames
-- [ ] UserList: Show user count badge
-- [ ] ConnectionStatus: Display connection state (connected/reconnecting/disconnected)
-- [ ] ConnectionStatus: Color-coded indicator (green/yellow/red)
-- [ ] SessionPage: Integrate UserList + ConnectionStatus in header
+- [x] UserList: Listen for user-joined, user-left events
+- [x] UserList: Display list of usernames
+- [x] UserList: Show user count badge
+- [x] ConnectionStatus: Display connection state (connected/reconnecting/disconnected)
+- [x] ConnectionStatus: Color-coded indicator (green/yellow/red)
+- [x] SessionPage: Integrate UserList + ConnectionStatus in header
 
 ### Layout
-- [ ] Header: ShareLink | LanguageSelector | UserList | ConnectionStatus
-- [ ] Main: CodeEditor (full height)
+- [x] Header: ShareLink | LanguageSelector | UserList | ConnectionStatus
+- [x] Main: CodeEditor (full height)
 
 ### Testing
-- [ ] Join session with multiple users, verify all appear in UserList
-- [ ] Disconnect internet, verify "Reconnecting" status
-- [ ] Close one tab, verify user removed from list in other tabs
+- [x] Join session with multiple users, verify all appear in UserList
+- [x] Disconnect internet, verify "Reconnecting" status
+- [x] Close one tab, verify user removed from list in other tabs
 
 ---
 

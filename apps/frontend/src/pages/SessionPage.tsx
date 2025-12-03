@@ -5,6 +5,8 @@ import type { Session, Language } from '../types/session';
 import { CodeEditor } from '../components/CodeEditor';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { ShareLink } from '../components/ShareLink';
+import { UserList } from '../components/UserList';
+import { ConnectionStatus } from '../components/ConnectionStatus';
 import { useSocket } from '../hooks/useSocket';
 import { useCollaboration } from '../hooks/useCollaboration';
 
@@ -158,31 +160,18 @@ export function SessionPage() {
         </div>
       )}
 
-      <div className="h-screen bg-slate-900 flex flex-col">
+      <div className={`h-screen bg-slate-900 flex flex-col ${showUsernameDialog ? 'blur-sm' : ''}`}>
       <header className="bg-slate-800 border-b border-slate-700 px-6 py-4 flex-shrink-0">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold text-white">CodeCollab</h1>
-            <LanguageSelector value={language} onChange={handleLanguageChange} />
+            <ShareLink sessionId={sessionId!} />
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-slate-400">
-              Users: <span className="text-white font-medium">{session.userCount}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  status === 'connected'
-                    ? 'bg-green-500'
-                    : status === 'reconnecting'
-                    ? 'bg-yellow-500'
-                    : 'bg-red-500'
-                }`}
-              />
-              <span className="text-sm text-slate-400 capitalize">{status}</span>
-            </div>
-            <ShareLink sessionId={sessionId!} />
+          <div className="flex items-center gap-6">
+            <LanguageSelector value={language} onChange={handleLanguageChange} />
+            <UserList socket={socket} />
+            <ConnectionStatus status={status} />
           </div>
         </div>
       </header>

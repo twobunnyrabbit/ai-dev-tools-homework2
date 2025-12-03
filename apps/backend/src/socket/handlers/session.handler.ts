@@ -57,6 +57,7 @@ export function registerSessionHandlers(io: SocketIOServer, socket: Socket): voi
     // Notify other users in the session
     socket.to(sessionId).emit('user-joined', {
       user,
+      users: sessionService.getSessionUsers(sessionId),
     });
 
     console.log(`User ${finalUsername} (${user.id}) joined session ${sessionId}`);
@@ -91,6 +92,7 @@ function handleUserLeaving(io: SocketIOServer, socket: Socket): void {
     socket.to(sessionId).emit('user-left', {
       userId: user.id,
       username: user.username,
+      users: sessionService.getSessionUsers(sessionId),
     });
 
     // Clean up tracking
