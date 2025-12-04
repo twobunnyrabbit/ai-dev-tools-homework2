@@ -1,0 +1,30 @@
+FROM node:20-alpine
+
+# Install pnpm globally
+RUN npm install -g pnpm@9
+
+WORKDIR /app
+
+# Copy workspace configuration and lock file
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Copy all package.json files for workspace structure
+COPY apps/backend/package.json ./apps/backend/
+COPY apps/frontend/package.json ./apps/frontend/
+COPY packages/api-types/package.json ./packages/api-types/
+COPY packages/tsconfig/package.json ./packages/tsconfig/
+
+# Install all dependencies (including dev dependencies)
+RUN pnpm install --frozen-lockfile
+
+# Copy all source code
+COPY apps/ ./apps/
+COPY packages/ ./packages/
+
+# Expose development server ports
+# 3000: Backend API server
+# 5173: Frontend Vite dev server
+EXPOSE 3000 5173
+
+# Run both frontend and backend in development mode with hot reload
+CMD ["pnpm", "dev"]

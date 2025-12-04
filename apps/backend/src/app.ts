@@ -24,6 +24,16 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDoc as any))
 // Routes
 app.use('/api', apiRoutes)
 
+// Serve frontend static files in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(resolve(process.cwd(), 'public')))
+
+  // Catch-all for client-side routing (SPA support)
+  app.get('*', (req, res) => {
+    res.sendFile(resolve(process.cwd(), 'public', 'index.html'))
+  })
+}
+
 // Error handling
 app.use(errorHandler)
 
