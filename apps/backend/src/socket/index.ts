@@ -2,6 +2,7 @@ import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { registerSessionHandlers } from './handlers/session.handler.js';
 import { registerCodeHandlers } from './handlers/code.handler.js';
+import { registerExecutionHandlers } from './handlers/execution.handler.js';
 
 export function initializeSocket(httpServer: HttpServer): SocketIOServer {
   const io = new SocketIOServer(httpServer, {
@@ -18,6 +19,7 @@ export function initializeSocket(httpServer: HttpServer): SocketIOServer {
     // Register event handlers
     registerSessionHandlers(io, socket);
     registerCodeHandlers(io, socket);
+    registerExecutionHandlers(io, socket);
 
     socket.on('disconnect', () => {
       console.log(`Client disconnected: ${socket.id}`);

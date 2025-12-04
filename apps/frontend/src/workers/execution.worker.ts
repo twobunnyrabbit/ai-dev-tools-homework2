@@ -8,11 +8,15 @@ const PYTHON_TIMEOUT_MS = 60000; // 60 second timeout for Python (first load can
 
 // Listen for messages from the main thread
 self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
+  console.log('[Worker] Message received:', event.data);
   const { type, language, code } = event.data;
 
   if (type !== 'execute' || !language || !code) {
+    console.warn('[Worker] Invalid message, ignoring:', { type, language, hasCode: !!code });
     return;
   }
+
+  console.log('[Worker] Executing', language, 'code, length:', code?.length || 0);
 
   let timeoutId: number | undefined;
   let executionPromise: Promise<ExecutionResult>;
@@ -64,10 +68,12 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
     }
 
     // Send result back to main thread
+    console.log('[Worker] Sending result back:', result);
     self.postMessage({
       type: 'result',
       result,
     } satisfies WorkerMessage);
+    console.log('[Worker] Result sent');
   } catch (error) {
     // Clear timeout on error
     if (timeoutId !== undefined) {
@@ -75,6 +81,7 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
     }
 
     const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('[Worker] Execution error:', error);
     self.postMessage({
       type: 'error',
       result: {
@@ -83,5 +90,6 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
         timestamp: Date.now(),
       },
     } satisfies WorkerMessage);
+    console.log('[Worker] Error sent');
   }
 });

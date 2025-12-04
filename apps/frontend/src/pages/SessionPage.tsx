@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSession, getSessionCode } from '../lib/api';
 import type { Session, Language } from '../types/session';
+import type { ExecutionResult } from '../types/execution';
 import { CodeEditor } from '../components/CodeEditor';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { ShareLink } from '../components/ShareLink';
@@ -24,6 +25,22 @@ export function SessionPage() {
   const [username, setUsername] = useState<string>('');
   const [showUsernameDialog, setShowUsernameDialog] = useState(true);
   const [usernameInput, setUsernameInput] = useState('');
+  const [userId, setUserId] = useState<string>('');
+  const [remoteResults, setRemoteResults] = useState<Map<string, { username: string; result: ExecutionResult }>>(new Map());
+  const [remoteExecuting, setRemoteExecuting] = useState<Map<string, { username: string; language: Language }>>(new Map());
+
+  // Use refs to track latest code and language for keyboard shortcut
+  const codeRef = useRef(code);
+  const languageRef = useRef(language);
+
+  // Update refs when state changes
+  useEffect(() => {
+    codeRef.current = code;
+  }, [code]);
+
+  useEffect(() => {
+    languageRef.current = language;
+  }, [language]);
 
   // Socket connection management
   const { socket, status } = useSocket();
@@ -34,12 +51,32 @@ export function SessionPage() {
     sessionId: sessionId || '',
     code,
     language,
+    currentUserId: userId,
     onCodeUpdate: setCode,
     onLanguageUpdate: setLanguage,
+    onRemoteExecutionStarted: (data) => {
+      setRemoteExecuting(prev => new Map(prev).set(data.userId, {
+        username: data.username,
+        language: data.language,
+      }));
+    },
+    onRemoteExecutionResult: (data) => {
+      // Remove from executing
+      setRemoteExecuting(prev => {
+        const next = new Map(prev);
+        next.delete(data.userId);
+        return next;
+      });
+      // Update results (replaces previous result for this user)
+      setRemoteResults(prev => new Map(prev).set(data.userId, {
+        username: data.username,
+        result: data.result,
+      }));
+    },
   });
 
   // Code execution hook
-  const { executeCode, clearResult, result, isExecuting } = useCodeExecution();
+  const { executeCode, clearResult, result, isExecuting } = useCodeExecution(socket, sessionId);
 
   // Fetch session data on mount
   useEffect(() => {
@@ -86,8 +123,9 @@ export function SessionPage() {
     });
 
     // Handle session-joined event
-    const handleSessionJoined = (data: { users: string[] }) => {
+    const handleSessionJoined = (data: { userId: string; username: string; users: string[] }) => {
       console.log('Joined session with users:', data.users);
+      setUserId(data.userId);
     };
 
     // Handle error event
@@ -126,9 +164,14 @@ export function SessionPage() {
     }
   };
 
-  const handleRunCode = () => {
-    executeCode(code, language);
-  };
+  // Use useCallback with refs to ensure keyboard shortcut always gets latest code
+  const handleRunCode = useCallback(() => {
+    console.log('[SessionPage] handleRunCode called', {
+      codeLength: codeRef.current.length,
+      language: languageRef.current
+    });
+    executeCode(codeRef.current, languageRef.current);
+  }, [executeCode]);
 
   if (isLoading) {
     return (
@@ -225,7 +268,14 @@ export function SessionPage() {
               onRun={handleRunCode}
             />
           </div>
-          <OutputPanel result={result} isExecuting={isExecuting} onClear={clearResult} />
+          <OutputPanel
+            result={result}
+            isExecuting={isExecuting}
+            onClear={clearResult}
+            remoteResults={remoteResults}
+            remoteExecuting={remoteExecuting}
+            currentUserId={userId}
+          />
         </div>
       </main>
       </div>

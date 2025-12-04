@@ -227,8 +227,8 @@ Real-time collaborative code editor for online interviews with shareable links, 
 
 ---
 
-## Phase 8: Code Execution (Phases 1-3) ✅
-**Goal:** Browser-based code execution for JavaScript, TypeScript, and Python
+## Phase 8: Code Execution (Phases 1-4) ✅
+**Goal:** Browser-based code execution for JavaScript, TypeScript, and Python with real-time output sharing
 
 ### Phase 8.1: Core Infrastructure (JS/TS) ✅
 **Dependencies**
@@ -309,10 +309,42 @@ Real-time collaborative code editor for online interviews with shareable links, 
 - [x] Unsupported languages show helpful tooltips
 - [x] All tests pass (24/24)
 
+### Phase 8.4: Real-time Output Sharing ✅
+**Files Created**
+- [x] `apps/backend/src/socket/handlers/execution.handler.ts` - Socket event handlers for execution events
+
+**Files Modified**
+- [x] `apps/backend/src/socket/index.ts` - Register execution handler
+- [x] `apps/frontend/src/hooks/useCodeExecution.ts` - Emit socket events, fix worker lifecycle
+- [x] `apps/frontend/src/hooks/useCollaboration.ts` - Listen for execution events
+- [x] `apps/frontend/src/pages/SessionPage.tsx` - Track remote execution state, fix keyboard shortcut
+- [x] `apps/frontend/src/components/OutputPanel.tsx` - Display remote results
+
+**Features**
+- [x] Socket events: `execution-started`, `execution-result` (client→server)
+- [x] Socket events: `execution-started`, `execution-update` (server→client broadcast)
+- [x] Real-time execution indicators: "🔄 {username} is running {language}..."
+- [x] Display remote results in chronological list with username labels
+- [x] Latest result only per user (Map-based storage)
+- [x] Auto-expand OutputPanel only on own execution (not remote)
+- [x] Event filtering to prevent duplicate results from own execution
+- [x] Fixed worker lifecycle bug (refs pattern to avoid recreation)
+- [x] Fixed keyboard shortcut bug (refs pattern to capture latest code)
+
+**Testing**
+- [x] Multi-tab execution sharing works correctly
+- [x] TypeScript compilation passes
+- [x] All tests pass (69 tests: 45 backend, 24 frontend)
+- [x] Keyboard shortcut (Cmd/Ctrl+Enter) executes with current code
+
+**Known Issues Fixed**
+- [x] Worker being recreated on socket/sessionId changes → Fixed with refs pattern
+- [x] Keyboard shortcut capturing stale code state → Fixed with codeRef/languageRef
+- [x] Empty code execution → Added validation
+
 ### Remaining Phases (Not Yet Implemented)
-- [ ] Phase 8.4: Real-time Output Sharing (Socket.io) - Broadcast execution results to all session users
 - [ ] Phase 8.5: Security & Error Handling - Output limits, worker crash recovery, CSP headers
-- [ ] Phase 8.6: Polish & UX - Keyboard shortcuts, execution stats, ANSI colors, mobile optimization
+- [ ] Phase 8.6: Polish & UX - Execution stats, ANSI colors, mobile optimization
 - [ ] Phase 8.7: Testing & Documentation - Unit tests, integration tests, browser compatibility
 
 ---

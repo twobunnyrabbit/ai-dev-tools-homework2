@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ExecutionResult } from '../types/execution.js';
+import type { ExecutionResult, Language } from '../types/execution.js';
 
 interface OutputPanelProps {
   result: ExecutionResult | null;
   isExecuting: boolean;
   onClear: () => void;
+  remoteResults?: Map<string, { username: string; result: ExecutionResult }>;
+  remoteExecuting?: Map<string, { username: string; language: Language }>;
+  currentUserId?: string;
 }
 
-export function OutputPanel({ result, isExecuting, onClear }: OutputPanelProps) {
+export function OutputPanel({ result, isExecuting, onClear, remoteResults, remoteExecuting, currentUserId }: OutputPanelProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const outputRef = useRef<HTMLDivElement>(null);
 
@@ -23,7 +26,7 @@ export function OutputPanel({ result, isExecuting, onClear }: OutputPanelProps) 
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
-  }, [result]);
+  }, [result, remoteResults, remoteExecuting]);
 
   const getStatusColor = (status: ExecutionResult['status']) => {
     switch (status) {
@@ -91,33 +94,88 @@ export function OutputPanel({ result, isExecuting, onClear }: OutputPanelProps) 
           ref={outputRef}
           className="max-h-[300px] overflow-y-auto px-4 py-3 bg-gray-950"
         >
-          {isExecuting && (
-            <div className="text-gray-400 animate-pulse">Running code...</div>
+          {/* Remote execution indicators */}
+          {remoteExecuting && remoteExecuting.size > 0 && (
+            <div className="mb-3 space-y-1">
+              {Array.from(remoteExecuting.entries()).map(([userId, data]) => (
+                <div key={userId} className="text-blue-400 text-sm animate-pulse">
+                  🔄 {data.username} is running {data.language}...
+                </div>
+              ))}
+            </div>
           )}
 
-          {!isExecuting && !result && (
+          {isExecuting && (
+            <div className="text-gray-400 animate-pulse mb-3">Running code...</div>
+          )}
+
+          {!isExecuting && !result && (!remoteResults || remoteResults.size === 0) && (
             <div className="text-gray-500 text-sm">
               No output yet. Press Cmd/Ctrl+Enter to run code.
             </div>
           )}
 
+          {/* Own result */}
           {result && (
-            <div className="font-mono text-sm space-y-2">
-              {/* Standard Output */}
-              {result.output && (
-                <div className="text-gray-200 whitespace-pre-wrap">
-                  {result.output}
-                </div>
-              )}
+            <div className="mb-4 pb-4 border-b border-gray-700">
+              <div className="text-xs font-semibold text-gray-400 mb-2">Your Output</div>
+              <div className="font-mono text-sm space-y-2">
+                {/* Standard Output */}
+                {result.output && (
+                  <div className="text-gray-200 whitespace-pre-wrap">
+                    {result.output}
+                  </div>
+                )}
 
-              {/* Error Output */}
-              {result.error && (
-                <div className="text-red-400 whitespace-pre-wrap">
-                  {result.error}
-                </div>
-              )}
+                {/* Error Output */}
+                {result.error && (
+                  <div className="text-red-400 whitespace-pre-wrap">
+                    {result.error}
+                  </div>
+                )}
+
+                {/* Execution time */}
+                {result.executionTime !== undefined && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    Executed in {result.executionTime}ms
+                  </div>
+                )}
+              </div>
             </div>
           )}
+
+          {/* Remote results */}
+          {remoteResults && Array.from(remoteResults.entries())
+            .sort((a, b) => a[1].username.localeCompare(b[1].username))
+            .map(([userId, data]) => (
+              <div key={userId} className="mb-4 pb-4 border-b border-gray-700 last:border-b-0">
+                <div className="text-xs font-semibold text-gray-400 mb-2">
+                  {data.username}'s Output
+                </div>
+                <div className="font-mono text-sm space-y-2">
+                  {/* Standard Output */}
+                  {data.result.output && (
+                    <div className="text-gray-200 whitespace-pre-wrap">
+                      {data.result.output}
+                    </div>
+                  )}
+
+                  {/* Error Output */}
+                  {data.result.error && (
+                    <div className="text-red-400 whitespace-pre-wrap">
+                      {data.result.error}
+                    </div>
+                  )}
+
+                  {/* Execution time */}
+                  {data.result.executionTime !== undefined && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      Executed in {data.result.executionTime}ms
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
         </div>
       )}
     </div>

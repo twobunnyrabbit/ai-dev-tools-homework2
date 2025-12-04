@@ -1,15 +1,19 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { Socket } from 'socket.io-client';
+import type { ExecutionResult, Language } from '../types/execution.js';
 
 interface UseCollaborationOptions {
   socket: Socket;
   sessionId: string;
   code: string;
   language: string;
+  currentUserId?: string;
   onCodeUpdate: (code: string) => void;
   onLanguageUpdate: (language: string) => void;
   onUserJoined?: (username: string) => void;
   onUserLeft?: (username: string) => void;
+  onRemoteExecutionStarted?: (data: { userId: string; username: string; code: string; language: Language }) => void;
+  onRemoteExecutionResult?: (data: { userId: string; username: string; result: ExecutionResult }) => void;
 }
 
 export function useCollaboration({
@@ -17,10 +21,13 @@ export function useCollaboration({
   sessionId,
   code,
   language,
+  currentUserId,
   onCodeUpdate,
   onLanguageUpdate,
   onUserJoined,
   onUserLeft,
+  onRemoteExecutionStarted,
+  onRemoteExecutionResult,
 }: UseCollaborationOptions) {
   // Use ref to track the latest code without triggering re-renders
   const codeRef = useRef(code);
@@ -105,11 +112,29 @@ export function useCollaboration({
       onUserLeft?.(data.username);
     };
 
+    // Listen for remote execution started
+    const handleExecutionStarted = (data: { userId: string; username: string; code: string; language: Language }) => {
+      // Filter out own execution events
+      if (currentUserId && data.userId !== currentUserId) {
+        onRemoteExecutionStarted?.(data);
+      }
+    };
+
+    // Listen for remote execution results
+    const handleExecutionUpdate = (data: { userId: string; username: string; result: ExecutionResult }) => {
+      // Filter out own execution events
+      if (currentUserId && data.userId !== currentUserId) {
+        onRemoteExecutionResult?.(data);
+      }
+    };
+
     // Register event listeners
     socket.on('code-update', handleCodeUpdate);
     socket.on('language-update', handleLanguageUpdate);
     socket.on('user-joined', handleUserJoined);
     socket.on('user-left', handleUserLeft);
+    socket.on('execution-started', handleExecutionStarted);
+    socket.on('execution-update', handleExecutionUpdate);
 
     // Cleanup listeners on unmount
     return () => {
@@ -117,13 +142,15 @@ export function useCollaboration({
       socket.off('language-update', handleLanguageUpdate);
       socket.off('user-joined', handleUserJoined);
       socket.off('user-left', handleUserLeft);
+      socket.off('execution-started', handleExecutionStarted);
+      socket.off('execution-update', handleExecutionUpdate);
 
       // Clear debounce timer
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [socket, onCodeUpdate, onLanguageUpdate, onUserJoined, onUserLeft]);
+  }, [socket, onCodeUpdate, onLanguageUpdate, onUserJoined, onUserLeft, onRemoteExecutionStarted, onRemoteExecutionResult, currentUserId]);
 
   return {
     emitCodeChange,
