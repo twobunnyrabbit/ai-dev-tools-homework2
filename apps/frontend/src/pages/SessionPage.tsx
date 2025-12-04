@@ -7,8 +7,11 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { ShareLink } from '../components/ShareLink';
 import { UserList } from '../components/UserList';
 import { ConnectionStatus } from '../components/ConnectionStatus';
+import { OutputPanel } from '../components/OutputPanel';
+import { RunButton } from '../components/RunButton';
 import { useSocket } from '../hooks/useSocket';
 import { useCollaboration } from '../hooks/useCollaboration';
+import { useCodeExecution } from '../hooks/useCodeExecution';
 
 export function SessionPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -34,6 +37,9 @@ export function SessionPage() {
     onCodeUpdate: setCode,
     onLanguageUpdate: setLanguage,
   });
+
+  // Code execution hook
+  const { executeCode, clearResult, result, isExecuting } = useCodeExecution();
 
   // Fetch session data on mount
   useEffect(() => {
@@ -120,6 +126,10 @@ export function SessionPage() {
     }
   };
 
+  const handleRunCode = () => {
+    executeCode(code, language);
+  };
+
   if (isLoading) {
     return (
       <div className="h-screen bg-slate-900 flex flex-col">
@@ -197,20 +207,25 @@ export function SessionPage() {
 
           <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-between md:justify-end flex-wrap">
             <LanguageSelector value={language} onChange={handleLanguageChange} />
+            <RunButton onRun={handleRunCode} isExecuting={isExecuting} language={language} />
             <UserList socket={socket} />
             <ConnectionStatus status={status} />
           </div>
         </div>
       </header>
 
-      <main className="flex-1 p-3 md:p-6 overflow-hidden">
-        <div className="h-full bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
-          <CodeEditor
-            value={code}
-            language={language}
-            onChange={handleCodeChange}
-            disabled={status !== 'connected'}
-          />
+      <main className="flex-1 p-3 md:p-6 overflow-hidden flex flex-col">
+        <div className="flex-1 bg-slate-800 rounded-lg border border-slate-700 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-hidden">
+            <CodeEditor
+              value={code}
+              language={language}
+              onChange={handleCodeChange}
+              disabled={status !== 'connected'}
+              onRun={handleRunCode}
+            />
+          </div>
+          <OutputPanel result={result} isExecuting={isExecuting} onClear={clearResult} />
         </div>
       </main>
       </div>

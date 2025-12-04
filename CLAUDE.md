@@ -129,17 +129,30 @@ Uses ESM modules (`.js` extensions in imports required).
   - Responsive mobile layout (header stacks on mobile)
   - Copy link feedback ("Copied!" state)
   - Graceful shutdown handlers (SIGTERM, SIGINT)
-- ⬜ **Phase 7: Testing** - Next up
-- ⬜ **Phase 8: Code Execution** - Planned (see `~/.claude/plans/happy-stargazing-tarjan.md`)
-  - Browser-based execution for JS, TS, Python
-  - Web Workers + Pyodide WASM
-  - Output panel with real-time sharing
-  - 7-phase implementation (MVP: 3-5 days)
+- ✅ **Phase 7: Testing** - Complete
+  - Backend tests: Session service, cleanup logic, Socket.io handlers
+  - Frontend tests: CodeEditor, LanguageSelector, UserList, ShareLink
+  - Manual testing checklist verified
+  - All tests passing (24/24)
+- 🔄 **Phase 8: Code Execution** - In Progress (Phases 1-3 complete, 4-7 remaining)
+  - ✅ Phase 8.1: Core Infrastructure (JS/TS execution with Web Workers, 5s timeout)
+  - ✅ Phase 8.2: Python Support (Pyodide WASM, lazy CDN loading, 60s first-load timeout)
+  - ✅ Phase 8.3: UI Integration (OutputPanel, RunButton, Cmd/Ctrl+Enter shortcut)
+  - ⬜ Phase 8.4: Real-time Output Sharing (Socket.io broadcast)
+  - ⬜ Phase 8.5: Security & Error Handling (Output limits, CSP headers)
+  - ⬜ Phase 8.6: Polish & UX (Execution stats, ANSI colors, mobile)
+  - ⬜ Phase 8.7: Testing & Documentation
 
 **Key Features:**
 - Shareable session links for interviews
 - Real-time collaborative code editing (Socket.io WebSockets)
-- Monaco Editor with multi-language syntax highlighting (6 languages)
+- Monaco Editor with multi-language syntax highlighting (6 languages: JS, TS, Python, Java, Go, C++)
+- **Browser-based code execution for JavaScript, TypeScript, and Python**
+  - Web Workers for isolated execution with 5s timeout
+  - Pyodide WASM for Python (lazy loaded from CDN, ~30MB first-time)
+  - Console output capture and error handling
+  - Collapsible output panel with execution time display
+  - Keyboard shortcut: Cmd/Ctrl+Enter to run code
 - In-memory session storage (ephemeral)
 - Live user presence with avatar display
 - Connection status indicator with auto-reconnection

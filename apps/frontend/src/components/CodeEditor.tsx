@@ -1,4 +1,5 @@
 import { Editor } from '@monaco-editor/react';
+import type * as Monaco from 'monaco-editor';
 import type { Language } from '../types/session';
 
 interface CodeEditorProps {
@@ -6,6 +7,7 @@ interface CodeEditorProps {
   language: Language;
   onChange: (value: string) => void;
   disabled?: boolean;
+  onRun?: () => void;
 }
 
 // Map our language types to Monaco language IDs
@@ -18,10 +20,24 @@ const languageMap: Record<Language, string> = {
   cpp: 'cpp',
 };
 
-export function CodeEditor({ value, language, onChange, disabled = false }: CodeEditorProps) {
+export function CodeEditor({ value, language, onChange, disabled = false, onRun }: CodeEditorProps) {
   const handleEditorChange = (newValue: string | undefined) => {
     if (!disabled) {
       onChange(newValue || '');
+    }
+  };
+
+  const handleEditorDidMount = (editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => {
+    if (onRun) {
+      // Add keyboard shortcut: Cmd/Ctrl+Enter to run code
+      editor.addAction({
+        id: 'run-code',
+        label: 'Run Code',
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+        run: () => {
+          onRun();
+        },
+      });
     }
   };
 
@@ -37,6 +53,7 @@ export function CodeEditor({ value, language, onChange, disabled = false }: Code
         language={languageMap[language]}
         value={value}
         onChange={handleEditorChange}
+        onMount={handleEditorDidMount}
         theme="vs-dark"
         options={{
           minimap: { enabled: true },
