@@ -102,25 +102,31 @@ sys.stderr = sys.__stderr__
     const stderr = output.get ? output.get('stderr') : output.stderr || '';
 
     // Apply output truncation
-    const { text: truncatedStdout } = truncateOutput(stdout);
-    const { text: truncatedStderr } = truncateOutput(stderr);
+    const stdoutResult = truncateOutput(stdout);
+    const stderrResult = truncateOutput(stderr);
 
     // If there's stderr, treat as error
     if (stderr) {
       return {
         status: 'error',
-        output: stdout ? truncatedStdout : undefined,
-        error: truncatedStderr,
+        output: stdout ? stdoutResult.text : undefined,
+        error: stderrResult.text,
         executionTime: Math.round(executionTime),
         timestamp: Date.now(),
+        outputLines: stdoutResult.originalLines,
+        outputSize: stdoutResult.originalSize,
+        wasTruncated: stdoutResult.wasTruncated || stderrResult.wasTruncated,
       };
     }
 
     return {
       status: 'success',
-      output: truncatedStdout || '(no output)',
+      output: stdoutResult.text || '(no output)',
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
+      outputLines: stdoutResult.originalLines,
+      outputSize: stdoutResult.originalSize,
+      wasTruncated: stdoutResult.wasTruncated,
     };
   } catch (error) {
     const executionTime = performance.now() - startTime;
@@ -134,13 +140,16 @@ sys.stderr = sys.__stderr__
       enhancedError = `${errorMessage}\n\nTip: Only Python standard library is available. External packages (numpy, pandas, etc.) are not supported in this environment.`;
     }
 
-    const { text: truncatedError } = truncateOutput(enhancedError);
+    const errorResult = truncateOutput(enhancedError);
 
     return {
       status: 'error',
-      error: truncatedError,
+      error: errorResult.text,
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
+      outputLines: 0,
+      outputSize: 0,
+      wasTruncated: errorResult.wasTruncated,
     };
   }
 }

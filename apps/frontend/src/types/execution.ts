@@ -8,6 +8,9 @@ export interface ExecutionResult {
   error?: string;
   executionTime?: number;
   timestamp: number;
+  outputLines?: number;      // Line count
+  outputSize?: number;       // Character count before truncation
+  wasTruncated?: boolean;    // Truncation flag
 }
 
 export interface WorkerMessage {

@@ -134,13 +134,13 @@ Uses ESM modules (`.js` extensions in imports required).
   - Frontend tests: CodeEditor, LanguageSelector, UserList, ShareLink
   - Manual testing checklist verified
   - All tests passing (24/24)
-- 🔄 **Phase 8: Code Execution** - In Progress (Phases 1-5 complete, 6-7 remaining)
+- 🔄 **Phase 8: Code Execution** - In Progress (Phases 1-6 complete, 7 remaining)
   - ✅ Phase 8.1: Core Infrastructure (JS/TS execution with Web Workers, 5s timeout)
   - ✅ Phase 8.2: Python Support (Pyodide WASM, lazy CDN loading, 60s first-load timeout)
   - ✅ Phase 8.3: UI Integration (OutputPanel, RunButton, Cmd/Ctrl+Enter shortcut)
   - ✅ Phase 8.4: Real-time Output Sharing (Socket.io broadcast, multi-user execution visibility)
   - ✅ Phase 8.5: Security & Error Handling (Output limits 100KB/1000 lines, worker crash recovery, CSP headers)
-  - ⬜ Phase 8.6: Polish & UX (Execution stats, ANSI colors, mobile)
+  - ✅ Phase 8.6: Polish & UX (Execution stats: lines/chars/time, ANSI color rendering, mobile responsive)
   - ⬜ Phase 8.7: Testing & Documentation
 
 **Key Features:**
@@ -161,6 +161,11 @@ Uses ESM modules (`.js` extensions in imports required).
     - Worker crash recovery: Auto-restart up to 3 times
     - CSP headers with Monaco Editor + Pyodide allowlist
     - Restricted CORS to specific origin
+  - **Polish & UX:**
+    - Execution stats: line count, character count, execution time, truncation indicator
+    - ANSI color support: Colored terminal output rendered with ansi_up
+    - Mobile responsive: Adaptive panel heights, font sizes, minimap toggling
+    - Touch-friendly: Proper touch targets, active states, landscape auto-collapse
 - In-memory session storage (ephemeral)
 - Live user presence with avatar display
 - Connection status indicator with auto-reconnection

@@ -29,28 +29,34 @@ export async function executeJavaScript(code: string): Promise<ExecutionResult> 
     }
 
     const executionTime = performance.now() - startTime;
-    const { text: truncatedOutput } = truncateOutput(logs.join('\n'));
+    const { text: truncatedOutput, wasTruncated, originalLines, originalSize } = truncateOutput(logs.join('\n'));
 
     return {
       status: 'success',
       output: truncatedOutput,
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
+      outputLines: originalLines,
+      outputSize: originalSize,
+      wasTruncated,
     };
   } catch (error) {
     const executionTime = performance.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : String(error);
     const stack = error instanceof Error ? error.stack : undefined;
 
-    const { text: truncatedOutput } = logs.length > 0 ? truncateOutput(logs.join('\n')) : { text: '', wasTruncated: false };
-    const { text: truncatedError } = truncateOutput(stack || errorMessage);
+    const outputResult = logs.length > 0 ? truncateOutput(logs.join('\n')) : { text: '', wasTruncated: false, originalLines: 0, originalSize: 0 };
+    const errorResult = truncateOutput(stack || errorMessage);
 
     return {
       status: 'error',
-      output: logs.length > 0 ? truncatedOutput : undefined,
-      error: truncatedError,
+      output: logs.length > 0 ? outputResult.text : undefined,
+      error: errorResult.text,
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
+      outputLines: outputResult.originalLines,
+      outputSize: outputResult.originalSize,
+      wasTruncated: outputResult.wasTruncated || errorResult.wasTruncated,
     };
   } finally {
     // Restore console

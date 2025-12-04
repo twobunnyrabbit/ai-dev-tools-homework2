@@ -4,14 +4,20 @@ export const MAX_OUTPUT_LINES = 1000;
 export interface TruncationResult {
   text: string;
   wasTruncated: boolean;
+  originalLines: number;
+  originalSize: number;
 }
 
 export function truncateOutput(text: string): TruncationResult {
   if (!text) {
-    return { text, wasTruncated: false };
+    return { text, wasTruncated: false, originalLines: 0, originalSize: 0 };
   }
 
+  // Capture original stats before truncation
   const lines = text.split('\n');
+  const originalLines = lines.length;
+  const originalSize = text.length;
+
   let truncated = text;
   let wasTruncated = false;
   let truncationReason = '';
@@ -35,5 +41,5 @@ export function truncateOutput(text: string): TruncationResult {
     truncated += `\n\n... [Output truncated. ${truncationReason}]`;
   }
 
-  return { text: truncated, wasTruncated };
+  return { text: truncated, wasTruncated, originalLines, originalSize };
 }

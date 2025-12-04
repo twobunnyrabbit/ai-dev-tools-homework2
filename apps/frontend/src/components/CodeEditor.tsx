@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Editor } from '@monaco-editor/react';
 import type * as Monaco from 'monaco-editor';
 import type { Language } from '../types/session';
@@ -21,6 +22,16 @@ const languageMap: Record<Language, string> = {
 };
 
 export function CodeEditor({ value, language, onChange, disabled = false, onRun }: CodeEditorProps) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleEditorChange = (newValue: string | undefined) => {
     if (!disabled) {
       onChange(newValue || '');
@@ -56,12 +67,15 @@ export function CodeEditor({ value, language, onChange, disabled = false, onRun 
         onMount={handleEditorDidMount}
         theme="vs-dark"
         options={{
-          minimap: { enabled: true },
-          fontSize: 14,
+          minimap: { enabled: !isMobile },
+          fontSize: isMobile ? 12 : 14,
           wordWrap: 'on',
           automaticLayout: true,
           scrollBeyondLastLine: false,
-          padding: { top: 16, bottom: 16 },
+          padding: {
+            top: isMobile ? 8 : 16,
+            bottom: isMobile ? 8 : 16
+          },
           tabSize: 2,
           insertSpaces: true,
           readOnly: disabled,

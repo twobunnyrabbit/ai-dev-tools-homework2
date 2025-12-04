@@ -372,8 +372,37 @@ Real-time collaborative code editor for online interviews with shareable links, 
 - [x] Output truncation works for large outputs
 - [x] Worker recovery prevents infinite restart loops
 
+### Phase 8.6: Polish & UX ✅
+**Dependencies**
+- [x] `cd apps/frontend && pnpm add ansi_up`
+
+**Files Created**
+- [x] `src/utils/ansi-renderer.ts` - ANSI-to-HTML converter using ansi_up
+
+**Files Modified**
+- [x] `src/types/execution.ts` - Added outputLines, outputSize, wasTruncated fields
+- [x] `src/workers/utils/output-limiter.ts` - Return originalLines, originalSize metadata
+- [x] `src/workers/executors/javascript.executor.ts` - Populate execution stats
+- [x] `src/workers/executors/typescript.executor.ts` - Populate execution stats
+- [x] `src/workers/executors/python.executor.ts` - Populate execution stats
+- [x] `src/components/OutputPanel.tsx` - ANSI rendering + stats display + mobile responsive
+- [x] `src/components/RunButton.tsx` - Mobile responsive sizing
+- [x] `src/components/CodeEditor.tsx` - Dynamic mobile options (minimap, font, padding)
+
+**Features**
+- [x] Execution stats displayed in header: "Success • 23ms • 15 lines • 487 chars • Truncated"
+- [x] ANSI color code support with ansi_up (4KB, XSS-safe)
+- [x] Mobile responsive OutputPanel: 200px (mobile) → 250px (tablet) → 300px (desktop)
+- [x] Mobile responsive RunButton: smaller sizing, active states, responsive tooltip
+- [x] Mobile responsive CodeEditor: disable minimap <768px, font 12px→14px, adaptive padding
+- [x] Landscape auto-collapse: OutputPanel collapses when height < 500px
+
+**Testing**
+- [x] Type check passes
+- [x] All tests pass (69/69: 45 backend, 24 frontend)
+- [x] Fixed ansi_up import (named import instead of default)
+
 ### Remaining Phases (Not Yet Implemented)
-- [ ] Phase 8.6: Polish & UX - Execution stats, ANSI colors, mobile optimization
 - [ ] Phase 8.7: Testing & Documentation - Unit tests, integration tests, browser compatibility
 
 ---

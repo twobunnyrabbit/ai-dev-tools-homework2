@@ -37,6 +37,9 @@ export async function executeTypeScript(code: string): Promise<ExecutionResult> 
         error: `TypeScript compilation error:\n${errors}`,
         executionTime: Math.round(transpileTime),
         timestamp: Date.now(),
+        outputLines: 0,
+        outputSize: 0,
+        wasTruncated: false,
       };
     }
 
@@ -57,6 +60,9 @@ export async function executeTypeScript(code: string): Promise<ExecutionResult> 
       error: `TypeScript transpilation failed: ${errorMessage}`,
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
+      outputLines: 0,
+      outputSize: 0,
+      wasTruncated: false,
     };
   }
 }

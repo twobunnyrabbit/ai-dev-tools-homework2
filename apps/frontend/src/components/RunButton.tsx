@@ -16,9 +16,9 @@ export function RunButton({ onRun, isExecuting, language }: RunButtonProps) {
       <button
         onClick={onRun}
         disabled={!isSupported || isExecuting}
-        className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+        className={`px-3 py-1 md:px-4 md:py-1.5 rounded-md text-xs md:text-sm font-medium transition-colors ${
           isSupported && !isExecuting
-            ? 'bg-green-600 text-white hover:bg-green-700'
+            ? 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800'
             : 'bg-gray-600 text-gray-400 cursor-not-allowed'
         }`}
         title={isSupported ? 'Run code (Cmd/Ctrl+Enter)' : `Code execution not available for ${language}`}
@@ -37,7 +37,7 @@ export function RunButton({ onRun, isExecuting, language }: RunButtonProps) {
 
       {/* Tooltip for unsupported languages */}
       {!isSupported && (
-        <div className="absolute top-full mt-2 right-0 w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+        <div className="absolute top-full mt-2 right-0 w-48 md:w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
           Code execution not available for {language}. Supported: JavaScript, TypeScript, Python.
         </div>
       )}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ExecutionResult, Language } from '../types/execution.js';
+import { renderAnsiText } from '../utils/ansi-renderer.js';
 
 interface OutputPanelProps {
   result: ExecutionResult | null;
@@ -27,6 +28,18 @@ export function OutputPanel({ result, isExecuting, onClear, remoteResults, remot
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
   }, [result, remoteResults, remoteExecuting]);
+
+  // Auto-collapse in landscape mode (height < 500px)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerHeight < 500) {
+        setIsCollapsed(true);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Check on mount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const getStatusColor = (status: ExecutionResult['status']) => {
     switch (status) {
@@ -59,24 +72,41 @@ export function OutputPanel({ result, isExecuting, onClear, remoteResults, remot
   return (
     <div className="border-t border-gray-700 bg-gray-900">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
+      <div className="flex items-center justify-between px-3 md:px-4 py-1.5 md:py-2 bg-gray-800">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white"
+          className="flex items-center gap-2 text-xs md:text-sm font-medium text-gray-300 hover:text-white"
         >
           <span className={`transition-transform ${isCollapsed ? '' : 'rotate-90'}`}>
             ▶
           </span>
           Output
           {result && (
-            <span className={`ml-2 text-xs ${getStatusColor(result.status)}`}>
-              {getStatusLabel(result.status)}
-            </span>
-          )}
-          {result?.executionTime !== undefined && (
-            <span className="ml-2 text-xs text-gray-500">
-              {result.executionTime}ms
-            </span>
+            <>
+              <span className={`ml-2 text-xs ${getStatusColor(result.status)}`}>
+                {getStatusLabel(result.status)}
+              </span>
+              {result.executionTime !== undefined && (
+                <span className="ml-1 text-xs text-gray-500">
+                  • {result.executionTime}ms
+                </span>
+              )}
+              {result.outputLines !== undefined && result.outputLines > 0 && (
+                <span className="ml-1 text-xs text-gray-500">
+                  • {result.outputLines} {result.outputLines === 1 ? 'line' : 'lines'}
+                </span>
+              )}
+              {result.outputSize !== undefined && result.outputSize > 0 && (
+                <span className="ml-1 text-xs text-gray-500">
+                  • {result.outputSize} {result.outputSize === 1 ? 'char' : 'chars'}
+                </span>
+              )}
+              {result.wasTruncated && (
+                <span className="ml-1 text-xs text-yellow-500">
+                  • Truncated
+                </span>
+              )}
+            </>
           )}
         </button>
         <button
@@ -92,7 +122,7 @@ export function OutputPanel({ result, isExecuting, onClear, remoteResults, remot
       {!isCollapsed && (
         <div
           ref={outputRef}
-          className="max-h-[300px] overflow-y-auto px-4 py-3 bg-gray-950"
+          className="max-h-[200px] sm:max-h-[250px] md:max-h-[300px] overflow-y-auto px-3 md:px-4 py-2 md:py-3 bg-gray-950"
         >
           {/* Remote execution indicators */}
           {remoteExecuting && remoteExecuting.size > 0 && (
@@ -122,16 +152,18 @@ export function OutputPanel({ result, isExecuting, onClear, remoteResults, remot
               <div className="font-mono text-sm space-y-2">
                 {/* Standard Output */}
                 {result.output && (
-                  <div className="text-gray-200 whitespace-pre-wrap">
-                    {result.output}
-                  </div>
+                  <div
+                    className="text-gray-200 whitespace-pre-wrap"
+                    dangerouslySetInnerHTML={{ __html: renderAnsiText(result.output) }}
+                  />
                 )}
 
                 {/* Error Output */}
                 {result.error && (
-                  <div className="text-red-400 whitespace-pre-wrap">
-                    {result.error}
-                  </div>
+                  <div
+                    className="text-red-400 whitespace-pre-wrap"
+                    dangerouslySetInnerHTML={{ __html: renderAnsiText(result.error) }}
+                  />
                 )}
 
                 {/* Execution time */}
@@ -155,16 +187,18 @@ export function OutputPanel({ result, isExecuting, onClear, remoteResults, remot
                 <div className="font-mono text-sm space-y-2">
                   {/* Standard Output */}
                   {data.result.output && (
-                    <div className="text-gray-200 whitespace-pre-wrap">
-                      {data.result.output}
-                    </div>
+                    <div
+                      className="text-gray-200 whitespace-pre-wrap"
+                      dangerouslySetInnerHTML={{ __html: renderAnsiText(data.result.output) }}
+                    />
                   )}
 
                   {/* Error Output */}
                   {data.result.error && (
-                    <div className="text-red-400 whitespace-pre-wrap">
-                      {data.result.error}
-                    </div>
+                    <div
+                      className="text-red-400 whitespace-pre-wrap"
+                      dangerouslySetInnerHTML={{ __html: renderAnsiText(data.result.error) }}
+                    />
                   )}
 
                   {/* Execution time */}
