@@ -11,6 +11,11 @@ export function useCodeExecution(socket?: Socket | null, sessionId?: string) {
   const socketRef = useRef(socket);
   const sessionIdRef = useRef(sessionId);
 
+  // Worker crash recovery tracking
+  const workerRestartCountRef = useRef(0);
+  const isRestartingRef = useRef(false);
+  const MAX_WORKER_RESTARTS = 3;
+
   // Update refs when props change
   useEffect(() => {
     socketRef.current = socket;
@@ -19,6 +24,46 @@ export function useCodeExecution(socket?: Socket | null, sessionId?: string) {
 
   // Initialize worker (only once)
   useEffect(() => {
+    // Respawn worker function
+    const respawnWorker = () => {
+      if (isRestartingRef.current) {
+        console.log('[useCodeExecution] Worker restart already in progress');
+        return;
+      }
+
+      isRestartingRef.current = true;
+      console.log('[useCodeExecution] Respawning worker...');
+
+      // Cleanup old worker
+      if (workerRef.current) {
+        try {
+          workerRef.current.removeEventListener('message', handleMessage);
+          workerRef.current.removeEventListener('error', handleError);
+          workerRef.current.terminate();
+        } catch (err) {
+          console.error('[useCodeExecution] Error cleaning up old worker:', err);
+        }
+        workerRef.current = null;
+      }
+
+      // Create new worker
+      try {
+        const worker = new Worker(
+          new URL('../workers/execution.worker.ts', import.meta.url),
+          { type: 'module' }
+        );
+        worker.addEventListener('message', handleMessage);
+        worker.addEventListener('error', handleError);
+        workerRef.current = worker;
+        workerRestartCountRef.current++;
+        console.log(`[useCodeExecution] Worker restarted (attempt ${workerRestartCountRef.current}/${MAX_WORKER_RESTARTS})`);
+      } catch (err) {
+        console.error('[useCodeExecution] Failed to create new worker:', err);
+      }
+
+      isRestartingRef.current = false;
+    };
+
     // Create worker instance
     const worker = new Worker(
       new URL('../workers/execution.worker.ts', import.meta.url),
@@ -36,6 +81,11 @@ export function useCodeExecution(socket?: Socket | null, sessionId?: string) {
         setResult(finalResult);
         setIsExecuting(false);
 
+        // Reset restart counter on successful execution
+        if (finalResult?.status === 'success') {
+          workerRestartCountRef.current = 0;
+        }
+
         // Emit execution result via socket if connected (using refs)
         if (socketRef.current && sessionIdRef.current && finalResult) {
           console.log('[useCodeExecution] Emitting execution-result via socket');
@@ -50,11 +100,24 @@ export function useCodeExecution(socket?: Socket | null, sessionId?: string) {
     const handleError = (error: ErrorEvent) => {
       console.error('[useCodeExecution] Worker error:', error);
       setIsExecuting(false);
-      setResult({
-        status: 'error',
-        error: error.message || 'Worker execution failed',
-        timestamp: Date.now(),
-      });
+
+      // Attempt worker recovery
+      if (workerRestartCountRef.current < MAX_WORKER_RESTARTS) {
+        console.log('[useCodeExecution] Attempting worker restart...');
+        respawnWorker();
+        setResult({
+          status: 'error',
+          error: `Worker error: ${error.message}. Restarted automatically.`,
+          timestamp: Date.now(),
+        });
+      } else {
+        console.error('[useCodeExecution] Max worker restarts exceeded');
+        setResult({
+          status: 'error',
+          error: `Worker crashed: ${error.message}. Please refresh the page to continue.`,
+          timestamp: Date.now(),
+        });
+      }
     };
 
     worker.addEventListener('message', handleMessage);

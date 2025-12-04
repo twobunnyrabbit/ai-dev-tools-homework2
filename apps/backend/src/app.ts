@@ -6,11 +6,16 @@ import { load } from 'js-yaml'
 import { resolve } from 'path'
 import apiRoutes from './routes/api.routes.js'
 import { errorHandler } from './middleware/error.middleware.js'
+import { conditionalSecurityMiddleware } from './middleware/security.middleware.js'
 
 const app = express()
 
 // Middleware
-app.use(cors())
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+}))
+app.use(conditionalSecurityMiddleware)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

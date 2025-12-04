@@ -1,5 +1,6 @@
 import { loadPyodide, type PyodideInterface } from 'pyodide';
 import type { ExecutionResult } from '../../types/execution.js';
+import { truncateOutput } from '../utils/output-limiter.js';
 
 // Cache Pyodide instance globally in worker
 let pyodide: PyodideInterface | null = null;
@@ -100,12 +101,16 @@ sys.stderr = sys.__stderr__
     const stdout = output.get ? output.get('stdout') : output.stdout || '';
     const stderr = output.get ? output.get('stderr') : output.stderr || '';
 
+    // Apply output truncation
+    const { text: truncatedStdout } = truncateOutput(stdout);
+    const { text: truncatedStderr } = truncateOutput(stderr);
+
     // If there's stderr, treat as error
     if (stderr) {
       return {
         status: 'error',
-        output: stdout || undefined,
-        error: stderr,
+        output: stdout ? truncatedStdout : undefined,
+        error: truncatedStderr,
         executionTime: Math.round(executionTime),
         timestamp: Date.now(),
       };
@@ -113,7 +118,7 @@ sys.stderr = sys.__stderr__
 
     return {
       status: 'success',
-      output: stdout || '(no output)',
+      output: truncatedStdout || '(no output)',
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
     };
@@ -129,9 +134,11 @@ sys.stderr = sys.__stderr__
       enhancedError = `${errorMessage}\n\nTip: Only Python standard library is available. External packages (numpy, pandas, etc.) are not supported in this environment.`;
     }
 
+    const { text: truncatedError } = truncateOutput(enhancedError);
+
     return {
       status: 'error',
-      error: enhancedError,
+      error: truncatedError,
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
     };

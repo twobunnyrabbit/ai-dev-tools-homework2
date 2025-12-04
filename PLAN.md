@@ -342,8 +342,37 @@ Real-time collaborative code editor for online interviews with shareable links, 
 - [x] Keyboard shortcut capturing stale code state → Fixed with codeRef/languageRef
 - [x] Empty code execution → Added validation
 
+### Phase 8.5: Security & Error Handling ✅
+**Dependencies**
+- [x] `cd apps/backend && pnpm add helmet`
+
+**Files Created**
+- [x] `apps/frontend/src/workers/utils/output-limiter.ts` - Output truncation utility
+- [x] `apps/backend/src/middleware/security.middleware.ts` - CSP and security headers
+
+**Files Modified**
+- [x] `apps/frontend/src/workers/executors/javascript.executor.ts` - Apply output limits
+- [x] `apps/frontend/src/workers/executors/python.executor.ts` - Apply output limits
+- [x] `apps/frontend/src/hooks/useCodeExecution.ts` - Worker crash recovery
+- [x] `apps/backend/src/app.ts` - Security middleware and CORS restriction
+
+**Features**
+- [x] Output limits: 100KB (100,000 chars) or 1000 lines max
+- [x] Clear truncation messages showing which limit was exceeded
+- [x] Worker crash recovery: Auto-restart up to 3 times
+- [x] Reset restart counter on successful execution
+- [x] CSP headers with Monaco Editor + Pyodide CDN allowlist
+- [x] X-Frame-Options, X-Content-Type-Options security headers
+- [x] Conditional security (full in prod, minimal in dev)
+- [x] CORS restricted to specific origin (localhost:5173 or FRONTEND_URL)
+
+**Testing**
+- [x] Type check passes
+- [x] All tests pass (69/69: 45 backend, 24 frontend)
+- [x] Output truncation works for large outputs
+- [x] Worker recovery prevents infinite restart loops
+
 ### Remaining Phases (Not Yet Implemented)
-- [ ] Phase 8.5: Security & Error Handling - Output limits, worker crash recovery, CSP headers
 - [ ] Phase 8.6: Polish & UX - Execution stats, ANSI colors, mobile optimization
 - [ ] Phase 8.7: Testing & Documentation - Unit tests, integration tests, browser compatibility
 

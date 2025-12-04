@@ -1,4 +1,5 @@
 import type { ExecutionResult } from '../../types/execution.js';
+import { truncateOutput } from '../utils/output-limiter.js';
 
 export async function executeJavaScript(code: string): Promise<ExecutionResult> {
   const startTime = performance.now();
@@ -28,10 +29,11 @@ export async function executeJavaScript(code: string): Promise<ExecutionResult> 
     }
 
     const executionTime = performance.now() - startTime;
+    const { text: truncatedOutput } = truncateOutput(logs.join('\n'));
 
     return {
       status: 'success',
-      output: logs.join('\n'),
+      output: truncatedOutput,
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
     };
@@ -40,10 +42,13 @@ export async function executeJavaScript(code: string): Promise<ExecutionResult> 
     const errorMessage = error instanceof Error ? error.message : String(error);
     const stack = error instanceof Error ? error.stack : undefined;
 
+    const { text: truncatedOutput } = logs.length > 0 ? truncateOutput(logs.join('\n')) : { text: '', wasTruncated: false };
+    const { text: truncatedError } = truncateOutput(stack || errorMessage);
+
     return {
       status: 'error',
-      output: logs.length > 0 ? logs.join('\n') : undefined,
-      error: stack || errorMessage,
+      output: logs.length > 0 ? truncatedOutput : undefined,
+      error: truncatedError,
       executionTime: Math.round(executionTime),
       timestamp: Date.now(),
     };
