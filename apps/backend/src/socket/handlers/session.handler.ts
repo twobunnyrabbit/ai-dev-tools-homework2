@@ -47,11 +47,13 @@ export function registerSessionHandlers(io: SocketIOServer, socket: Socket): voi
     // Join the socket room
     socket.join(sessionId);
 
-    // Notify the user they've joined
+    // Notify the user they've joined (include current code and language state)
     socket.emit('session-joined', {
       userId: user.id,
       username: finalUsername,
       users: sessionService.getSessionUsers(sessionId),
+      code: session.code,
+      language: session.language,
     });
 
     // Notify other users in the session

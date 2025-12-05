@@ -45,6 +45,28 @@ export function SessionPage() {
   // Socket connection management
   const { socket, status } = useSocket();
 
+  // Stable callbacks for remote execution events
+  const handleRemoteExecutionStarted = useCallback((data: { userId: string; username: string; code: string; language: Language }) => {
+    setRemoteExecuting(prev => new Map(prev).set(data.userId, {
+      username: data.username,
+      language: data.language,
+    }));
+  }, []);
+
+  const handleRemoteExecutionResult = useCallback((data: { userId: string; username: string; result: ExecutionResult }) => {
+    // Remove from executing
+    setRemoteExecuting(prev => {
+      const next = new Map(prev);
+      next.delete(data.userId);
+      return next;
+    });
+    // Update results (replaces previous result for this user)
+    setRemoteResults(prev => new Map(prev).set(data.userId, {
+      username: data.username,
+      result: data.result,
+    }));
+  }, []);
+
   // Collaboration hooks
   const { emitCodeChange, emitLanguageChange } = useCollaboration({
     socket,
@@ -54,25 +76,8 @@ export function SessionPage() {
     currentUserId: userId,
     onCodeUpdate: setCode,
     onLanguageUpdate: setLanguage,
-    onRemoteExecutionStarted: (data) => {
-      setRemoteExecuting(prev => new Map(prev).set(data.userId, {
-        username: data.username,
-        language: data.language,
-      }));
-    },
-    onRemoteExecutionResult: (data) => {
-      // Remove from executing
-      setRemoteExecuting(prev => {
-        const next = new Map(prev);
-        next.delete(data.userId);
-        return next;
-      });
-      // Update results (replaces previous result for this user)
-      setRemoteResults(prev => new Map(prev).set(data.userId, {
-        username: data.username,
-        result: data.result,
-      }));
-    },
+    onRemoteExecutionStarted: handleRemoteExecutionStarted,
+    onRemoteExecutionResult: handleRemoteExecutionResult,
   });
 
   // Code execution hook
@@ -123,9 +128,17 @@ export function SessionPage() {
     });
 
     // Handle session-joined event
-    const handleSessionJoined = (data: { userId: string; username: string; users: string[] }) => {
-      console.log('Joined session with users:', data.users);
+    const handleSessionJoined = (data: {
+      userId: string;
+      username: string;
+      users: string[];
+      code: string;
+      language: Language;
+    }) => {
       setUserId(data.userId);
+      // Update code and language from server state
+      setCode(data.code);
+      setLanguage(data.language);
     };
 
     // Handle error event
